@@ -14,24 +14,42 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Be Vietnam Pro',sans-serif;background:#EEF1F8;color:var(--g800);min-height:100vh;}
+/* SETUP SCREEN */
+#setup{position:fixed;inset:0;background:#0B1E3D;z-index:9999;display:flex;align-items:center;justify-content:center;}
+#setup.hide{display:none;}
+.setup-box{background:#fff;border-radius:16px;padding:32px;max-width:480px;width:90%;box-shadow:var(--shadow2);}
+.setup-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--gold),#E8B84B);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;}
+.setup-title{font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.setup-sub{font-size:12.5px;color:var(--g400);margin-bottom:20px;line-height:1.6;}
+.setup-steps{background:var(--g50);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
+.setup-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
+.setup-step:last-child{margin-bottom:0;}
+.sn{width:22px;height:22px;border-radius:50%;background:var(--navy);color:var(--gold);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.ss-txt{font-size:12px;color:var(--g600);line-height:1.6;}
+.ss-txt strong{color:var(--navy);}
+.ss-txt a{color:var(--gold);text-decoration:none;font-weight:700;}
+.setup-inp-wrap{position:relative;margin-bottom:14px;}
+.setup-inp-wrap label{display:block;font-size:10px;font-weight:700;color:var(--g600);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.setup-inp-wrap input{width:100%;padding:10px 12px;border:1.5px solid var(--g200);border-radius:8px;font-family:inherit;font-size:12.5px;outline:none;transition:.15s;}
+.setup-inp-wrap input:focus{border-color:var(--gold);}
+.setup-btn{width:100%;padding:12px;border-radius:8px;border:none;background:var(--navy);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;}
+.setup-btn:hover{background:var(--navy2);}
+.setup-btn.loading{opacity:.7;pointer-events:none;}
+.setup-err{color:var(--red);font-size:11.5px;margin-top:8px;display:none;}
 /* HEADER */
 .hdr{background:var(--navy);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.35);position:sticky;top:0;z-index:200;}
 .hdr-brand{display:flex;align-items:center;gap:9px}
 .hdr-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),#E8B84B);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;}
-.hdr-name{color:#fff;font-size:13px;font-weight:800;letter-spacing:.4px}
+.hdr-name{color:#fff;font-size:13px;font-weight:800;}
 .hdr-sub{color:var(--gold);font-size:9.5px;}
-.hdr-right{display:flex;align-items:center;gap:6px;}
+.hdr-right{display:flex;align-items:center;gap:7px;}
 .badge{display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;font-size:10.5px;font-weight:600;}
-.b-drive{background:rgba(255,255,255,.08);color:var(--g400);}
-.b-drive.on{color:#4ADE80;background:rgba(74,222,128,.12);}
-.b-sheet{background:rgba(255,255,255,.08);color:var(--g400);cursor:pointer;}
-.b-sheet.on{color:#4ADE80;background:rgba(74,222,128,.12);}
-.b-sheet.busy{color:#60a5fa;background:rgba(96,165,250,.15);animation:blink .7s infinite alternate;}
+.b-ok{color:#4ADE80;background:rgba(74,222,128,.12);}
+.b-busy{color:#60a5fa;background:rgba(96,165,250,.15);animation:blink .7s infinite alternate;}
 @keyframes blink{from{opacity:.5}to{opacity:1}}
 .bdot{width:6px;height:6px;border-radius:50%;background:currentColor;}
 .btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:7px;border:none;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-gold{background:var(--gold);color:var(--navy)} .btn-gold:hover{background:var(--gold-lt);}
-.btn-out{background:transparent;color:var(--gold);border:1.5px solid rgba(201,164,74,.5);} .btn-out:hover{border-color:var(--gold);background:rgba(201,164,74,.1);}
 .btn-ghost{background:rgba(255,255,255,.08);color:#cdd6e8;border:1px solid rgba(255,255,255,.12);} .btn-ghost:hover{background:rgba(255,255,255,.14);color:#fff;}
 .btn-navy{background:var(--navy);color:#fff;} .btn-navy:hover{background:var(--navy2);}
 .btn-grn{background:#059669;color:#fff;} .btn-grn:hover{background:#047857;}
@@ -40,25 +58,23 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:#EEF1F8;color:var(--g800
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
 .stat{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);border-left:4px solid var(--gold);display:flex;align-items:center;gap:10px;}
 .stat.s-done{border-color:#34D399} .stat.s-pend{border-color:#F59E0B} .stat.s-dup{border-color:var(--red)}
-.s-ico{font-size:20px;line-height:1} .s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--g400);margin-bottom:1px}
-.s-val{font-size:24px;font-weight:800;color:var(--navy);line-height:1}
-.stat.s-done .s-val{color:#059669} .stat.s-pend .s-val{color:#D97706} .stat.s-dup .s-val{color:var(--red)}
-/* TOOLBAR */
+.si{font-size:20px;line-height:1} .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--g400);margin-bottom:1px}
+.sv{font-size:24px;font-weight:800;color:var(--navy);line-height:1}
+.stat.s-done .sv{color:#059669} .stat.s-pend .sv{color:#D97706} .stat.s-dup .sv{color:var(--red)}
 .tbar{background:#fff;border-radius:10px 10px 0 0;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid var(--navy);}
 .tbar-l{display:flex;align-items:center;gap:10px;flex:1;}
 .tbar-title{font-size:12px;font-weight:800;color:var(--navy);white-space:nowrap;}
 .srch{position:relative;flex:1;max-width:300px;}
-.srch-ico{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--g400);pointer-events:none;}
-#si{width:100%;padding:5px 28px 5px 26px;border:1.5px solid var(--g200);border-radius:7px;font-family:inherit;font-size:11.5px;outline:none;background:var(--g50);transition:.15s;}
+.srch-i{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--g400);pointer-events:none;font-size:12px;}
+#si{width:100%;padding:5px 28px 5px 25px;border:1.5px solid var(--g200);border-radius:7px;font-family:inherit;font-size:11.5px;outline:none;background:var(--g50);transition:.15s;}
 #si:focus{border-color:var(--gold);background:#fff;}
 .srch-x{position:absolute;right:7px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--g400);font-size:13px;display:none;} .srch-x.v{display:block;}
 .tbar-r{display:flex;gap:6px;}
-/* TABLE */
 .tw{background:#fff;border-radius:0 0 10px 10px;overflow:auto;box-shadow:var(--shadow);max-height:calc(100vh - 256px);}
 table{width:100%;border-collapse:collapse;font-size:11.5px;}
 thead th{background:var(--navy);color:var(--gold);padding:9px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;position:sticky;top:0;z-index:10;}
 thead th:first-child{text-align:center;width:40px;}
-thead th.tc{text-align:center;width:108px;} thead th.ta{width:68px;text-align:center;}
+thead th.tc{text-align:center;width:110px;} thead th.ta{width:68px;text-align:center;}
 tbody tr{border-bottom:1px solid var(--g100);transition:background .12s;}
 tbody tr:hover{background:var(--g50);}
 tbody tr.cr{background:var(--ok-bg);}
@@ -69,17 +85,14 @@ td:first-child{text-align:center;color:var(--g400);font-weight:700;font-size:11p
 .ed{border:1.5px solid transparent;border-radius:5px;padding:5px 6px;outline:none;font-family:inherit;font-size:11.5px;color:var(--g800);background:transparent;width:100%;transition:.15s;}
 .ed:focus{border-color:var(--gold);background:var(--gold-bg);}
 input[type=date].ed{min-width:124px;color:var(--g800);}
-/* CUSTOMER */
 .cw{position:relative;}
 .cl{position:absolute;top:calc(100% + 2px);left:0;min-width:185px;background:#fff;border:1.5px solid var(--g200);border-radius:7px;box-shadow:var(--shadow);z-index:100;max-height:185px;overflow-y:auto;display:none;}
 .cl.on{display:block;}
 .ci{padding:6px 10px;font-size:11.5px;cursor:pointer;transition:.1s;} .ci:hover{background:var(--gold-bg);}
 .ci.m{color:var(--gold);font-weight:700;border-top:1px solid var(--g100);}
-/* SO */
 .sg{display:flex;align-items:center;gap:4px;padding:2px 4px;border:1.5px solid transparent;border-radius:6px;}
-.sm{min-width:80px;max-width:98px;} .sn{color:var(--g600);font-style:italic;}
+.sm{min-width:80px;max-width:98px;} .sn2{color:var(--g600);font-style:italic;}
 .di{font-size:12px;display:none;cursor:help;} .dr .di{display:inline;}
-/* IMG */
 .ic{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
 .it{padding:3px 7px;border:1.5px solid var(--g200);border-radius:5px;background:#fff;cursor:pointer;font-size:10.5px;font-weight:600;font-family:inherit;color:var(--g600);transition:.15s;white-space:nowrap;}
 .it:hover{border-color:var(--gold);}
@@ -92,7 +105,7 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 .cc{display:flex;align-items:center;justify-content:center;}
 .cc input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--navy);}
 .ra{display:flex;gap:3px;justify-content:center;}
-.sb{width:25px;height:25px;border:none;border-radius:5px;background:#DCFCE7;color:#16A34A;cursor:pointer;font-size:12px;transition:.15s;display:flex;align-items:center;justify-content:center;}
+.sb{width:25px;height:25px;border:none;border-radius:5px;background:#DCFCE7;color:#16A34A;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
 .sb:hover{background:#16A34A;color:#fff;}
 .us .sb{background:#16A34A;color:#fff;animation:pulse .9s infinite alternate;}
 @keyframes pulse{from{box-shadow:0 0 0 2px rgba(22,163,74,.2)}to{box-shadow:0 0 0 5px rgba(22,163,74,.3)}}
@@ -102,22 +115,19 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 .empty .ei{font-size:36px;margin-bottom:8px;} .empty p{font-size:12px;line-height:1.7;}
 .nores{text-align:center;padding:28px;color:var(--g400);font-size:12px;}
 .sh{font-size:10px;color:var(--g400);padding:5px 14px 6px;text-align:right;border-top:1px solid var(--g100);}
-/* LB */
 #lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;align-items:center;justify-content:center;cursor:zoom-out;}
 #lb.on{display:flex;}
 #lb img{max-width:90vw;max-height:90vh;border-radius:8px;cursor:default;animation:lbI .15s ease;}
 @keyframes lbI{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
-.lbx{position:absolute;top:14px;right:17px;color:#fff;font-size:24px;cursor:pointer;opacity:.8;} .lbx:hover{opacity:1;}
+.lbx{position:absolute;top:14px;right:17px;color:#fff;font-size:24px;cursor:pointer;}
 .lbn{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:28px;cursor:pointer;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;}
 #lbp{left:13px;} #lbnx{right:13px;}
-/* TOAST */
 #toast{position:fixed;bottom:15px;right:15px;padding:8px 14px;border-radius:8px;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;box-shadow:var(--shadow2);z-index:500;transform:translateY(80px);opacity:0;transition:all .3s;max-width:310px;}
 #toast.on{transform:translateY(0);opacity:1;}
 #toast.w{background:#92400E;border-left:3px solid #F59E0B;}
 #toast.ok{background:#065F46;border-left:3px solid #34D399;}
 #toast.e{background:#7F1D1D;border-left:3px solid var(--red);}
 #toast.i{background:#1e3a5f;border-left:3px solid #60a5fa;}
-/* MODALS */
 .mb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;align-items:center;justify-content:center;}
 .mb.on{display:flex;}
 .md{background:#fff;border-radius:12px;padding:20px;max-width:440px;width:90%;box-shadow:var(--shadow2);animation:mdI .18s ease;}
@@ -125,11 +135,9 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 @keyframes mdI{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 .md h3{font-size:13.5px;font-weight:800;color:var(--navy);margin-bottom:3px;}
 .msub{font-size:10.5px;color:var(--g400);margin-bottom:12px;line-height:1.6;}
-.fg{margin-bottom:10px;}
-.fg label{display:block;font-size:9.5px;font-weight:700;color:var(--g600);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;}
+.fg{margin-bottom:10px;} .fg label{display:block;font-size:9.5px;font-weight:700;color:var(--g600);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;}
 .fg input{width:100%;padding:7px 10px;border:1.5px solid var(--g200);border-radius:6px;font-family:inherit;font-size:11.5px;outline:none;transition:.15s;}
 .fg input:focus{border-color:var(--gold);}
-.fh{font-size:9.5px;color:var(--g400);margin-top:2px;}
 .ma{display:flex;gap:6px;justify-content:flex-end;margin-top:14px;}
 .btn-c{background:var(--g100);color:var(--g600);} .btn-c:hover{background:var(--g200);}
 .ctgs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;min-height:30px;padding:5px;border:1.5px solid var(--g200);border-radius:6px;}
@@ -140,53 +148,63 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 </head>
 <body>
 
+<!-- SETUP SCREEN — chỉ hiện lần đầu -->
+<div id="setup">
+  <div class="setup-box">
+    <div class="setup-logo">🏝️</div>
+    <div class="setup-title">Vinpearl Order Tracker</div>
+    <div class="setup-sub">Cần kết nối với Google Apps Script để lưu dữ liệu. Chỉ cần làm 1 lần duy nhất!</div>
+    <div class="setup-steps">
+      <div class="setup-step"><div class="sn">1</div><div class="ss-txt">Mở <a href="https://script.google.com" target="_blank">script.google.com</a> → Dự án mới</div></div>
+      <div class="setup-step"><div class="sn">2</div><div class="ss-txt">Dán toàn bộ code từ file <strong>Code.gs</strong> vào → Lưu (Ctrl+S)</div></div>
+      <div class="setup-step"><div class="sn">3</div><div class="ss-txt">Nhấn <strong>Deploy → New deployment → Web app</strong><br>Execute as: <strong>Me</strong> · Who has access: <strong>Anyone</strong> → Deploy</div></div>
+      <div class="setup-step"><div class="sn">4</div><div class="ss-txt">Copy <strong>Web app URL</strong> dán vào ô dưới → Kết nối</div></div>
+    </div>
+    <div class="setup-inp-wrap">
+      <label>Apps Script Web App URL</label>
+      <input id="setupUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+    </div>
+    <div class="setup-err" id="setupErr">❌ URL không hợp lệ hoặc không kết nối được.</div>
+    <button class="setup-btn" id="setupBtn" onclick="doSetup()">🔗 Kết nối ngay</button>
+  </div>
+</div>
+
 <header class="hdr">
   <div class="hdr-brand">
     <div class="hdr-icon">🏝️</div>
     <div><div class="hdr-name">VINPEARL ORDER TRACKER</div><div class="hdr-sub">HỆ THỐNG QUẢN LÝ ĐƠN HÀNG</div></div>
   </div>
   <div class="hdr-right">
-    <div class="badge b-drive" id="bdDrive"><div class="bdot"></div><span id="bdDriveTxt">Drive: Chưa kết nối</span></div>
-    <div class="badge b-sheet" id="bdSheet" onclick="openSheet()"><div class="bdot"></div><span id="bdSheetTxt">Sheets: Chưa tạo</span></div>
-    <button class="btn btn-out" id="btnConn" onclick="connect()">🔗 Kết nối</button>
+    <div class="badge b-ok" id="bdg"><div class="bdot"></div><span id="bdgTxt">Đã kết nối</span></div>
     <button class="btn btn-ghost" onclick="showCM()" title="Khách hàng">👥</button>
-    <button class="btn btn-ghost" onclick="showCfg()" title="Cài đặt">⚙️</button>
+    <button class="btn btn-ghost" onclick="resetConn()" title="Đổi kết nối">🔄</button>
   </div>
 </header>
 
 <main class="main">
   <div class="stats">
-    <div class="stat"><div class="s-ico">📦</div><div><div class="s-lbl">Tổng đơn</div><div class="s-val" id="sT">0</div></div></div>
-    <div class="stat s-done"><div class="s-ico">✅</div><div><div class="s-lbl">Hoàn thành</div><div class="s-val" id="sD">0</div></div></div>
-    <div class="stat s-pend"><div class="s-ico">🔄</div><div><div class="s-lbl">Đang xử lý</div><div class="s-val" id="sP">0</div></div></div>
-    <div class="stat s-dup"><div class="s-ico">⚠️</div><div><div class="s-lbl">SO trùng</div><div class="s-val" id="sDp">0</div></div></div>
+    <div class="stat"><div class="si">📦</div><div><div class="sl">Tổng đơn</div><div class="sv" id="sT">0</div></div></div>
+    <div class="stat s-done"><div class="si">✅</div><div><div class="sl">Hoàn thành</div><div class="sv" id="sD">0</div></div></div>
+    <div class="stat s-pend"><div class="si">🔄</div><div><div class="sl">Đang xử lý</div><div class="sv" id="sP">0</div></div></div>
+    <div class="stat s-dup"><div class="si">⚠️</div><div><div class="sl">SO trùng</div><div class="sv" id="sDp">0</div></div></div>
   </div>
   <div class="tbar">
     <div class="tbar-l">
       <div class="tbar-title">📋 Bảng thống kê Vinpearl</div>
-      <div class="srch">
-        <span class="srch-ico">🔍</span>
-        <input id="si" placeholder="Tìm KH, số SO, ghi chú…" oninput="onSrch(this.value)">
-        <span class="srch-x" id="sx" onclick="clrSrch()">✕</span>
-      </div>
+      <div class="srch"><span class="srch-i">🔍</span><input id="si" placeholder="Tìm KH, số SO, ghi chú…" oninput="onSrch(this.value)"><span class="srch-x" id="sx" onclick="clrSrch()">✕</span></div>
     </div>
     <div class="tbar-r">
       <button class="btn btn-navy" onclick="addRow()">＋ Thêm dòng</button>
-      <button class="btn btn-grn" onclick="syncSheets(false)">📊 Sync</button>
+      <button class="btn btn-grn" onclick="syncNow()">📊 Sync</button>
       <button class="btn btn-gold" onclick="expCSV()">📥 CSV</button>
     </div>
   </div>
   <div class="tw">
     <table>
       <thead><tr>
-        <th>STT</th>
-        <th style="min-width:148px;">Tên Khách Hàng</th>
-        <th style="min-width:126px;">Ngày đi hàng</th>
-        <th style="min-width:215px;">Số SO &amp; Ghi chú SO</th>
-        <th style="min-width:180px;">Hình ảnh</th>
-        <th class="tc">Thu hồi chứng từ</th>
-        <th style="min-width:120px;">Ghi chú</th>
-        <th class="ta">Lưu/Xoá</th>
+        <th>STT</th><th style="min-width:148px;">Tên Khách Hàng</th><th style="min-width:126px;">Ngày đi hàng</th>
+        <th style="min-width:215px;">Số SO &amp; Ghi chú SO</th><th style="min-width:180px;">Hình ảnh</th>
+        <th class="tc">Thu hồi chứng từ</th><th style="min-width:120px;">Ghi chú</th><th class="ta">Lưu/Xoá</th>
       </tr></thead>
       <tbody id="tb"></tbody>
     </table>
@@ -196,33 +214,20 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
   </div>
 </main>
 
-<!-- LB -->
 <div id="lb" onclick="lbCl(event)"><span class="lbx" onclick="lbH()">✕</span><button class="lbn" id="lbp" onclick="lbN(-1,event)">‹</button><img id="lbi" src="" alt=""><button class="lbn" id="lbnx" onclick="lbN(1,event)">›</button></div>
 
-<!-- CFG -->
-<div class="mb" id="cfgM" onclick="if(event.target===this)hideCfg()">
-  <div class="md">
-    <h3>⚙️ Cài đặt</h3><p class="msub">Client ID &amp; API Key đã nhúng sẵn. Chỉ cần điền Folder ID và Sheet ID nếu muốn.</p>
-    <div class="fg"><label>Drive Folder ID (thư mục lưu ảnh)</label><input id="cfF" placeholder="Lấy từ URL thư mục Drive"><div class="fh">drive.google.com/drive/folders/<b>ID_ở_đây</b></div></div>
-    <div class="fg"><label>Google Sheet ID (để trống = tự tạo khi Sync)</label><input id="cfS" placeholder="Tự tạo lần đầu khi Sync"></div>
-    <div class="ma"><button class="btn btn-c" onclick="hideCfg()">Huỷ</button><button class="btn btn-navy" onclick="saveCfg()">💾 Lưu</button></div>
-  </div>
-</div>
-
-<!-- CUSTOMER -->
+<!-- CUSTOMER MGR -->
 <div class="mb" id="cmM" onclick="if(event.target===this)hideCM()">
-  <div class="md w">
-    <h3>👥 Danh sách khách hàng</h3><p class="msub">Quản lý menu xổ xuống</p>
+  <div class="md w"><h3>👥 Danh sách khách hàng</h3><p class="msub">Quản lý menu xổ xuống</p>
     <div class="fg"><label>Danh sách (× để xoá)</label><div class="ctgs" id="ctgs"></div></div>
-    <div class="fg" style="display:flex;gap:7px;"><input id="nc" placeholder="Tên khách hàng mới…" style="flex:1;" onkeydown="if(event.key==='Enter')addC()"><button class="btn btn-navy" onclick="addC()">＋</button></div>
+    <div class="fg" style="display:flex;gap:7px;"><input id="nc" placeholder="Tên mới…" style="flex:1;" onkeydown="if(event.key==='Enter')addC()"><button class="btn btn-navy" onclick="addC()">＋</button></div>
     <div class="ma"><button class="btn btn-c" onclick="hideCM()">Đóng</button></div>
   </div>
 </div>
 
 <!-- CONFIRM -->
 <div class="mb" id="cfM">
-  <div class="md" style="max-width:300px;">
-    <h3 id="cfT">Xác nhận</h3><p id="cfB" style="font-size:11.5px;color:var(--g600);margin:6px 0 13px;"></p>
+  <div class="md" style="max-width:300px;"><h3 id="cfT">Xác nhận</h3><p id="cfB" style="font-size:11.5px;color:var(--g600);margin:6px 0 13px;"></p>
     <div class="ma"><button class="btn btn-c" onclick="cfH()">Huỷ</button><button class="btn" id="cfOk" style="background:var(--red);color:#fff;">Xoá</button></div>
   </div>
 </div>
@@ -232,153 +237,125 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 
 <script>
 // ══ CONFIG ══
-const CLIENT_ID='93472591816-7ktat69ifiqpfcht44hc5rnrglbdn82u.apps.googleusercontent.com';
-const SCOPES='https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets';
-let CFG={folderId:'',sheetId:''};
-let customers=['Vinpearl Resort & Spa Nha Trang','Vinpearl Resort & Spa Phú Quốc','Vinpearl Resort & Spa Hội An','Vinpearl Resort & Spa Đà Nẵng','Vinpearl Discovery','Vinpearl Safari','Vinpearl Hotel','Vinpearl Condotel','VinOasis','VinHolidays'];
+let SCRIPT_URL = '';
+let customers = ['Vinpearl Resort & Spa Nha Trang','Vinpearl Resort & Spa Phú Quốc','Vinpearl Resort & Spa Hội An','Vinpearl Resort & Spa Đà Nẵng','Vinpearl Discovery','Vinpearl Safari','Vinpearl Hotel','Vinpearl Condotel','VinOasis','VinHolidays'];
 
 // ══ STATE ══
 let rows=[],nid=1,pend={};
-let TOKEN=null,gisOK=false,tclient=null;
 let aur=null,lbSrcs=[],lbIdx=0,sq='',bgt=null;
 
-// ══ LOAD ══
+// ══ PERSIST ══
 function loadAll(){
-  try{const s=localStorage.getItem('vp5_cfg');if(s)CFG={...CFG,...JSON.parse(s)};}catch(e){}
-  try{const s=localStorage.getItem('vp5_custs');if(s)customers=JSON.parse(s);}catch(e){}
-  try{const s=localStorage.getItem('vp5_rows');if(s){rows=JSON.parse(s);nid=rows.length?Math.max(...rows.map(r=>r.id))+1:1;}}catch(e){}
+  SCRIPT_URL = localStorage.getItem('vp6_url') || 'https://script.google.com/macros/s/AKfycbyLFuf3gRJ_n3sHy7N5qG87ctSyd-aStGL8-zfSJGFQOl6AG0HCJeysw1VWPHD7K35SaQ/exec';
+  try{const s=localStorage.getItem('vp6_custs');if(s)customers=JSON.parse(s);}catch(e){}
+  try{const s=localStorage.getItem('vp6_rows');if(s){rows=JSON.parse(s);nid=rows.length?Math.max(...rows.map(r=>r.id))+1:1;}}catch(e){}
 }
-function saveR(){localStorage.setItem('vp5_rows',JSON.stringify(rows));}
-function saveCFG(){localStorage.setItem('vp5_cfg',JSON.stringify(CFG));}
+function saveR(){localStorage.setItem('vp6_rows',JSON.stringify(rows));}
 
-// ══ GIS — chỉ cần script này, không cần gapi ══
-function loadGIS(){
-  return new Promise(res=>{
-    if(document.getElementById('_gis')){res();return;}
-    const s=document.createElement('script');
-    s.id='_gis';s.src='https://accounts.google.com/gsi/client';
-    s.onload=()=>{
-      tclient=google.accounts.oauth2.initTokenClient({
-        client_id:CLIENT_ID,scope:SCOPES,
-        callback:(r)=>{
-          if(r.error){toast('❌ '+r.error,'e');updateUI();return;}
-          TOKEN=r.access_token;
-          localStorage.setItem('vp5_conn','1');
-          updateUI();
-          // Sau khi có token: load từ Sheets (nếu đã có SheetID)
-          if(CFG.sheetId){loadFromSheets();}
-          else{toast('✅ Đã kết nối! Nhấn 📊 Sync để tạo Sheet.','ok');}
-        }
-      });
-      gisOK=true;res();
-    };
-    s.onerror=()=>res();
-    document.head.appendChild(s);
-  });
-}
-
-// ══ TỰ KẾT NỐI ══
-async function autoConn(){
-  await loadGIS();
-  if(gisOK && localStorage.getItem('vp5_conn')==='1'){
-    // Im lặng — không hiện popup nếu đã đăng nhập Google
-    tclient.requestAccessToken({prompt:''});
-  }
-}
-function connect(){
-  if(!gisOK){loadGIS().then(()=>{if(gisOK)tclient.requestAccessToken({prompt:'consent'});});return;}
-  tclient.requestAccessToken({prompt:'consent'});
-}
-function updateUI(){
-  const on=!!TOKEN;
-  document.getElementById('bdDrive').className='badge b-drive'+(on?' on':'');
-  document.getElementById('bdDriveTxt').textContent=on?'Drive: Đã kết nối':'Drive: Chưa kết nối';
-  document.getElementById('btnConn').textContent=on?'✅ Đã kết nối':'🔗 Kết nối';
-  document.getElementById('bdSheet').className='badge b-sheet'+(CFG.sheetId?' on':'');
-  document.getElementById('bdSheetTxt').textContent=CFG.sheetId?'Sheets: Liên kết':'Sheets: Chưa tạo';
-}
-function openSheet(){if(CFG.sheetId)window.open(`https://docs.google.com/spreadsheets/d/${CFG.sheetId}`,'_blank');}
-
-// ══ SHEETS API (dùng fetch trực tiếp, không cần gapi) ══
-async function sheetFetch(url,method,body){
-  if(!TOKEN){toast('⚠️ Chưa kết nối Google','w');return null;}
-  const r=await fetch('https://sheets.googleapis.com/v4/'+url,{
-    method:method||'GET',
-    headers:{'Authorization':'Bearer '+TOKEN,...(body?{'Content-Type':'application/json'}:{})},
-    ...(body?{body:JSON.stringify(body)}:{})
-  });
-  if(!r.ok){const e=await r.json().catch(()=>({error:{message:r.statusText}}));throw new Error(e.error?.message||r.statusText);}
-  return method==='POST'||method==='PUT'?r.json():r.json();
-}
-
-async function loadFromSheets(){
-  if(!TOKEN||!CFG.sheetId)return;
-  toast('📊 Đang tải dữ liệu từ Sheets…','i');
+// ══ SETUP ══
+async function doSetup(){
+  const url = document.getElementById('setupUrl').value.trim();
+  if(!url.includes('script.google.com')){showSetupErr('URL phải từ script.google.com');return;}
+  const btn = document.getElementById('setupBtn');
+  btn.textContent = '⏳ Đang kiểm tra…';
+  btn.classList.add('loading');
+  document.getElementById('setupErr').style.display='none';
   try{
-    const d=await sheetFetch(`spreadsheets/${CFG.sheetId}/values/${encodeURIComponent('Đơn Hàng!A2:J2000')}`);
-    const vals=(d&&d.values)||[];
-    if(vals.length){
-      rows=vals.map((v,i)=>({id:i+1,customer:v[1]||'',date:v[2]||'',so:v[3]||'',soNote:v[4]||'',imgDriveLink:v[5]||'',imgDriveId:'',imgSrc:'',completed:(v[6]||'')==='✅ Hoàn thành',note:v[7]||''}));
-      nid=rows.length+1;saveR();render();updateStats();rechkDup();
-      toast(`📊 Đã tải ${rows.length} đơn từ Sheets!`,'ok');
-    }else{toast('✅ Sheet trống — nhấn ＋ Thêm dòng','ok');}
-    updateUI();
-  }catch(e){toast('⚠️ Lỗi đọc Sheets: '+e.message,'w');}
-}
-
-async function syncSheets(silent){
-  if(!TOKEN){toast('⚠️ Nhấn 🔗 Kết nối trước','w');return;}
-  if(!silent && document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}
-  if(!silent){
-    document.getElementById('bdSheet').className='badge b-sheet busy';
-    document.getElementById('bdSheetTxt').textContent='Đang sync…';
-  }
-  try{
-    // Tạo sheet nếu chưa có
-    if(!CFG.sheetId){
-      const r=await sheetFetch('spreadsheets','POST',{properties:{title:'Vinpearl Orders '+new Date().toLocaleDateString('vi-VN')},sheets:[{properties:{title:'Đơn Hàng'}}]});
-      CFG.sheetId=r.spreadsheetId;saveCFG();updateUI();
+    const r = await fetch(url + '?action=ping');
+    const d = await r.json();
+    if(d.status === 'ok' || d.rows !== undefined){
+      SCRIPT_URL = url;
+      localStorage.setItem('vp6_url', url);
+      document.getElementById('setup').classList.add('hide');
+      toast('✅ Kết nối thành công!','ok');
+      // Load data từ script
+      await loadFromScript();
+    } else {
+      showSetupErr('Script phản hồi nhưng có lỗi: ' + (d.message||'unknown'));
     }
-    const H=[['STT','Tên Khách Hàng','Ngày đi hàng','Số SO','Ghi chú SO','Link Ảnh Drive','Thu hồi chứng từ','Ghi chú','Cập nhật']];
-    const D=rows.map((r,i)=>[i+1,r.customer||'',r.date||'',r.so||'',r.soNote||'',r.imgDriveLink||'',r.completed?'✅ Hoàn thành':'⏳ Chưa',r.note||'',new Date().toLocaleString('vi-VN')]);
-    // Clear
-    await sheetFetch(`spreadsheets/${CFG.sheetId}/values/${encodeURIComponent('Đơn Hàng!A:Z')}:clear`,'POST');
-    // Write
-    await sheetFetch(`spreadsheets/${CFG.sheetId}/values/${encodeURIComponent('Đơn Hàng!A1')}?valueInputOption=USER_ENTERED`,'PUT',{values:[...H,...D]});
-    if(!silent)toast(`✅ Đã sync ${rows.length} đơn!`,'ok');
-    updateUI();
   }catch(e){
-    if(!silent)toast('❌ Lỗi Sheets: '+e.message,'e');
-    console.error(e);
+    showSetupErr('Không kết nối được. Kiểm tra URL và Deploy settings (Anyone can access).');
   }
-  if(!silent){document.getElementById('bdSheet').className='badge b-sheet'+(CFG.sheetId?' on':'');updateUI();}
+  btn.textContent = '🔗 Kết nối ngay';
+  btn.classList.remove('loading');
+}
+function showSetupErr(msg){const el=document.getElementById('setupErr');el.textContent='❌ '+msg;el.style.display='block';}
+function resetConn(){if(confirm('Đổi Apps Script URL?')){localStorage.removeItem('vp6_url');location.reload();}}
+
+// ══ API CALLS (qua Apps Script, không cần login) ══
+async function scriptGet(params){
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params);
+  const r = await fetch(url);
+  return r.json();
+}
+async function scriptPost(action, data){
+  const body = new URLSearchParams({action, data: JSON.stringify(data)});
+  const r = await fetch(SCRIPT_URL, {method:'POST', body});
+  return r.json();
+}
+async function scriptPostRaw(params){
+  const body = new URLSearchParams(params);
+  const r = await fetch(SCRIPT_URL, {method:'POST', body});
+  return r.json();
 }
 
-function schedSync(){clearTimeout(bgt);if(!TOKEN)return;bgt=setTimeout(()=>syncSheets(true),3000);}
-
-// ══ DRIVE UPLOAD ══
-async function upDrive(file,rid){
-  if(!TOKEN)return null;
-  const meta={name:`VP_${rid}_${Date.now()}_${file.name}`,mimeType:file.type};
-  if(CFG.folderId)meta.parents=[CFG.folderId];
-  const form=new FormData();
-  form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
-  form.append('file',file);
+// ══ LOAD FROM SCRIPT ══
+async function loadFromScript(){
+  if(!SCRIPT_URL) return;
+  setBadge('busy','Đang tải…');
   try{
-    const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:form});
-    const d=await r.json();
-    await fetch(`https://www.googleapis.com/drive/v3/files/${d.id}/permissions`,{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({role:'reader',type:'anyone'})});
-    toast('☁️ Ảnh đã lên Drive!','ok');
-    return{id:d.id,link:d.webViewLink};
-  }catch(e){toast('❌ Lỗi Drive: '+e.message,'e');return null;}
+    const d = await scriptGet({});
+    if(d.status === 'ok' && d.rows){
+      if(d.rows.length > 0){
+        rows = d.rows.map((r,i)=>({...r,id:i+1,imgSrc:'',imgDriveId:r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''}));
+        nid = rows.length+1;
+        saveR(); render(); updateStats(); rechkDup();
+        toast('📊 Đã tải '+rows.length+' đơn!','ok');
+      }else{
+        toast('✅ Sheet trống — nhấn ＋ Thêm dòng','ok');
+      }
+    }
+    setBadge('ok','Đã kết nối');
+  }catch(e){setBadge('ok','Đã kết nối (offline)');toast('⚠️ Dùng dữ liệu local','w');}
 }
 
-// ══ CUSTOMER MGR ══
+// ══ SYNC ══
+async function syncNow(){
+  if(!SCRIPT_URL){toast('⚠️ Chưa cài đặt script URL','w');return;}
+  if(document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}
+  setBadge('busy','Đang sync…');
+  try{
+    const d = await scriptPost('sync', rows);
+    if(d.status==='ok'){toast('✅ Đã sync '+rows.length+' đơn!','ok');}
+    else throw new Error(d.message||'error');
+  }catch(e){toast('❌ Lỗi sync: '+e.message,'e');}
+  setBadge('ok','Đã kết nối');
+}
+function schedSync(){clearTimeout(bgt);if(!SCRIPT_URL)return;bgt=setTimeout(()=>syncNow().catch(()=>{}),4000);}
+
+// ══ UPLOAD ẢNH QUA SCRIPT ══
+async function uploadViaScript(base64,fileName,so){
+  setBadge('busy','Đang upload ảnh…');
+  try{
+    const d = await scriptPostRaw({action:'uploadImage',imageData:base64,fileName,so});
+    setBadge('ok','Đã kết nối');
+    if(d.status==='ok') return d;
+    throw new Error(d.message);
+  }catch(e){setBadge('ok','Đã kết nối');throw e;}
+}
+
+function setBadge(type,txt){
+  const el=document.getElementById('bdg');
+  el.className='badge '+(type==='busy'?'b-busy':'b-ok');
+  document.getElementById('bdgTxt').textContent=txt;
+}
+
+// ══ CUSTOMER ══
 function showCM(){renderCT();document.getElementById('cmM').classList.add('on');}
 function hideCM(){document.getElementById('cmM').classList.remove('on');}
 function renderCT(){document.getElementById('ctgs').innerHTML=customers.map((c,i)=>`<div class="ctg">${esc(c)}<span class="cx" onclick="rmC(${i})">×</span></div>`).join('');}
-function addC(){const v=document.getElementById('nc').value.trim();if(!v||customers.includes(v))return;customers.push(v);localStorage.setItem('vp5_custs',JSON.stringify(customers));document.getElementById('nc').value='';renderCT();render();toast('✅ Đã thêm!','ok');}
-function rmC(i){customers.splice(i,1);localStorage.setItem('vp5_custs',JSON.stringify(customers));renderCT();render();}
+function addC(){const v=document.getElementById('nc').value.trim();if(!v||customers.includes(v))return;customers.push(v);localStorage.setItem('vp6_custs',JSON.stringify(customers));document.getElementById('nc').value='';renderCT();render();toast('✅ Đã thêm!','ok');}
+function rmC(i){customers.splice(i,1);localStorage.setItem('vp6_custs',JSON.stringify(customers));renderCT();render();}
 
 // ══ SEARCH ══
 function onSrch(v){sq=v.trim().toLowerCase();document.getElementById('sx').className='srch-x'+(sq?' v':'');render();}
@@ -394,7 +371,7 @@ function clUs(id){const tr=document.querySelector(`tr[data-id="${id}"]`);if(tr)t
 function saveRow(id){
   iP(id);const dr=pend[id];const ns=norm(dr.so);
   if(ns){const dp=rows.find(r=>r.id!==id&&norm(r.so)===ns);
-    if(dp){toast(`❌ Số SO "${dr.so}" đã tồn tại!`,'e');
+    if(dp){toast('❌ Số SO "'+dr.so+'" đã tồn tại!','e');
       const tr=document.querySelector(`tr[data-id="${id}"]`);if(tr){const inp=tr.querySelector('.sm');inp.style.borderColor='var(--red)';inp.style.background='var(--red-lt)';setTimeout(()=>{inp.style.borderColor='';inp.style.background='';},1800);inp.focus();}
       return;}}
   const row=rows.find(r=>r.id===id);if(!row)return;
@@ -411,27 +388,46 @@ function addRow(){
 }
 function delRow(id){cfShow('Xoá dòng này?','Không thể hoàn tác.',()=>{delete pend[id];rows=rows.filter(r=>r.id!==id);saveR();render();updateStats();schedSync();if(!document.querySelector('tr.us'))document.getElementById('sh').style.display='none';});}
 function aS(id,f,v){const r=rows.find(r=>r.id===id);if(!r)return;r[f]=v;if(pend[id])pend[id][f]=v;saveR();if(f==='completed')updateStats();schedSync();}
-function rechkDup(){
-  const cnt={};rows.forEach(r=>{const k=norm(r.so);if(k)cnt[k]=(cnt[k]||0)+1;});
-  rows.forEach(r=>{const dp=norm(r.so)&&cnt[norm(r.so)]>1;const tr=document.querySelector(`tr[data-id="${r.id}"]`);if(tr)tr.classList.toggle('dr',dp);});
-  document.getElementById('sDp').textContent=rows.filter(r=>norm(r.so)&&cnt[norm(r.so)]>1).length;
-}
+function rechkDup(){const cnt={};rows.forEach(r=>{const k=norm(r.so);if(k)cnt[k]=(cnt[k]||0)+1;});rows.forEach(r=>{const dp=norm(r.so)&&cnt[norm(r.so)]>1;const tr=document.querySelector(`tr[data-id="${r.id}"]`);if(tr)tr.classList.toggle('dr',dp);});document.getElementById('sDp').textContent=rows.filter(r=>norm(r.so)&&cnt[norm(r.so)]>1).length;}
 const norm=s=>s?.trim().toUpperCase()||'';
 
 // ══ DROPDOWN ══
 function shDr(id){document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));const tr=document.querySelector(`tr[data-id="${id}"]`);if(!tr)return;bldDr(tr.querySelector('.ci-inp').value,tr.querySelector('.cl'),id);tr.querySelector('.cl').classList.add('on');}
 function bldDr(q,l,id){const lq=q.trim().toLowerCase();const fl=customers.filter(c=>!lq||c.toLowerCase().includes(lq));const ao=(q.trim()&&!customers.find(c=>c.toLowerCase()===lq))?`<div class="ci m" onclick="aAP(${id},'${esc(q.trim())}')">＋ Thêm "${esc(q.trim())}"</div>`:'';l.innerHTML=fl.map(c=>`<div class="ci" onclick="pkC(${id},'${esc(c)}')">${esc(c)}</div>`).join('')+ao+`<div class="ci m" onclick="showCM()">⚙️ Quản lý</div>`;}
 function pkC(id,v){setD(id,'customer',v);const tr=document.querySelector(`tr[data-id="${id}"]`);if(tr){tr.querySelector('.ci-inp').value=v;tr.querySelector('.cl').classList.remove('on');}}
-function aAP(id,v){if(v&&!customers.includes(v)){customers.push(v);localStorage.setItem('vp5_custs',JSON.stringify(customers));}pkC(id,v);}
+function aAP(id,v){if(v&&!customers.includes(v)){customers.push(v);localStorage.setItem('vp6_custs',JSON.stringify(customers));}pkC(id,v);}
 document.addEventListener('click',e=>{if(!e.target.closest('.cw'))document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));});
 
 // ══ IMAGE ══
 function togImg(id){const r=rows.find(r=>r.id===id);if(!r)return;const tr=document.querySelector(`tr[data-id="${id}"]`);const t=tr.querySelector('.it'),th=tr.querySelector('.ith'),up=tr.querySelector('.iu');if(r.imgSrc){if(th.style.display==='block'){th.style.display='none';t.textContent='👁️ Xem ảnh';}else{th.style.display='block';t.textContent='🙈 Ẩn ảnh';}}else{if(up.style.display==='flex'){up.style.display='none';t.textContent='📎 Thêm ảnh';}else{up.style.display='flex';t.textContent='✕ Đóng';aur=id;}}}
 function trigU(id){aur=id;const f=document.getElementById('hfi');f.value='';f.click();}
-async function procImg(file,rid){const r=rows.find(r=>r.id===rid);if(!r)return;const rdr=new FileReader();rdr.onload=async(e)=>{r.imgSrc=e.target.result;saveR();const tr=document.querySelector(`tr[data-id="${rid}"]`);if(tr){const th=tr.querySelector('.ith'),up=tr.querySelector('.iu'),t=tr.querySelector('.it');th.src=r.imgSrc;th.style.display='block';up.style.display='none';t.textContent='🙈 Ẩn ảnh';th.onclick=()=>lbO(r.imgSrc);}toast('🖼️ Đã thêm ảnh!','ok');if(TOKEN){const dr=await upDrive(file,rid);if(dr){r.imgDriveId=dr.id;r.imgDriveLink=dr.link;saveR();const tr2=document.querySelector(`tr[data-id="${rid}"]`);if(tr2){let a=tr2.querySelector('.dl');if(!a){a=document.createElement('a');a.className='dl';a.target='_blank';a.title='Drive';tr2.querySelector('.ic').appendChild(a);}a.href=dr.link;a.textContent='☁️';}}}};rdr.readAsDataURL(file);}
+async function procImg(file,rid){
+  const r=rows.find(r=>r.id===rid);if(!r)return;
+  // Preview local trước
+  const rdr=new FileReader();
+  rdr.onload=async(e)=>{
+    const b64=e.target.result;
+    r.imgSrc=b64;saveR();
+    const tr=document.querySelector(`tr[data-id="${rid}"]`);
+    if(tr){const th=tr.querySelector('.ith'),up=tr.querySelector('.iu'),t=tr.querySelector('.it');th.src=b64;th.style.display='block';up.style.display='none';t.textContent='🙈 Ẩn ảnh';th.onclick=()=>lbO(b64);}
+    toast('🖼️ Đã thêm ảnh! Đang upload…','i');
+    // Upload qua Apps Script
+    try{
+      const d=await uploadViaScript(b64,file.name,r.so||'');
+      r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;r.imgSrc=d.thumbUrl||b64;saveR();
+      const tr2=document.querySelector(`tr[data-id="${rid}"]`);
+      if(tr2){
+        const th2=tr2.querySelector('.ith');th2.src=r.imgSrc;th2.onclick=()=>lbO(r.imgSrc);
+        let a=tr2.querySelector('.dl');if(!a){a=document.createElement('a');a.className='dl';a.target='_blank';a.title='Drive';tr2.querySelector('.ic').appendChild(a);}a.href=d.viewUrl;a.textContent='☁️';
+      }
+      toast('☁️ Ảnh đã lên Drive!','ok');
+    }catch(e){toast('⚠️ Lỗi upload: '+e.message,'w');}
+  };
+  rdr.readAsDataURL(file);
+}
 function dropI(e,id){e.preventDefault();e.currentTarget.classList.remove('dg');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))procImg(f,id);}
 
-// ══ LIGHTBOX ══
+// ══ LB ══
 function lbO(s){lbSrcs=rows.filter(r=>r.imgSrc).map(r=>r.imgSrc);lbIdx=lbSrcs.indexOf(s);if(lbIdx<0)lbIdx=0;document.getElementById('lbi').src=s;document.getElementById('lb').classList.add('on');document.body.style.overflow='hidden';document.getElementById('lbp').style.display=lbSrcs.length>1?'flex':'none';document.getElementById('lbnx').style.display=lbSrcs.length>1?'flex':'none';}
 function lbH(){document.getElementById('lb').classList.remove('on');document.body.style.overflow='';}
 function lbCl(e){if(e.target===document.getElementById('lb'))lbH();}
@@ -456,8 +452,8 @@ function render(){
 <td>${i+1}</td>
 <td><div class="cw"><input class="ed ci-inp" value="${esc(d.customer||'')}" placeholder="Chọn hoặc gõ…" oninput="setD(${r.id},'customer',this.value);bldDr(this.value,this.closest('.cw').querySelector('.cl'),${r.id})" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}" onfocus="shDr(${r.id})" style="min-width:132px;"><div class="cl">${opts}</div></div></td>
 <td><input type="date" class="ed" value="${esc(r.date||'')}" onchange="aS(${r.id},'date',this.value)"></td>
-<td><div class="sg"><input class="ed sm" value="${esc(d.so||'')}" placeholder="Số SO…" oninput="setD(${r.id},'so',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}"><span class="di" title="Trùng SO!" style="${isDup?'display:inline':'display:none'}">⚠️</span><input class="ed sn" value="${esc(d.soNote||'')}" placeholder="ghi chú SO…" oninput="setD(${r.id},'soNote',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}"></div></td>
-<td><div class="ic"><button class="it" onclick="togImg(${r.id})">${r.imgSrc?'👁️ Xem ảnh':'📎 Thêm ảnh'}</button><img class="ith" alt=""><div class="iu" ondragover="event.preventDefault();this.classList.add('dg')" ondragleave="this.classList.remove('dg')" ondrop="dropI(event,${r.id})" onclick="trigU(${r.id})"><span class="ui">📁</span><div class="uh">Click/Paste<br>Kéo thả</div></div>${r.imgDriveId?`<a class="dl" href="${r.imgDriveLink}" target="_blank" title="Drive">☁️</a>`:''}</div></td>
+<td><div class="sg"><input class="ed sm" value="${esc(d.so||'')}" placeholder="Số SO…" oninput="setD(${r.id},'so',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}"><span class="di" title="Trùng SO!" style="${isDup?'display:inline':'display:none'}">⚠️</span><input class="ed sn2" value="${esc(d.soNote||'')}" placeholder="ghi chú SO…" oninput="setD(${r.id},'soNote',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}"></div></td>
+<td><div class="ic"><button class="it" onclick="togImg(${r.id})">${r.imgSrc?'👁️ Xem ảnh':'📎 Thêm ảnh'}</button><img class="ith" alt=""><div class="iu" ondragover="event.preventDefault();this.classList.add('dg')" ondragleave="this.classList.remove('dg')" ondrop="dropI(event,${r.id})" onclick="trigU(${r.id})"><span class="ui">📁</span><div class="uh">Click/Paste<br>Kéo thả</div></div>${r.imgDriveId?`<a class="dl" href="${r.imgDriveLink}" target="_blank">☁️</a>`:''}</div></td>
 <td class="cc"><input type="checkbox" ${r.completed?'checked':''} onchange="aS(${r.id},'completed',this.checked);this.closest('tr').classList.toggle('cr',this.checked)"></td>
 <td><input class="ed" value="${esc(d.note||'')}" placeholder="Ghi chú…" oninput="setD(${r.id},'note',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}" style="min-width:108px;"></td>
 <td><div class="ra"><button class="sb" onclick="saveRow(${r.id})" title="Lưu (Enter)">💾</button><button class="db" onclick="delRow(${r.id})">🗑️</button></div></td>
@@ -469,27 +465,12 @@ function render(){
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
 // ══ STATS ══
-function updateStats(){
-  const tot=rows.length,dn=rows.filter(r=>r.completed).length;
-  const cnt={};rows.forEach(r=>{const k=norm(r.so);if(k)cnt[k]=(cnt[k]||0)+1;});
-  document.getElementById('sT').textContent=tot;document.getElementById('sD').textContent=dn;
-  document.getElementById('sP').textContent=tot-dn;document.getElementById('sDp').textContent=rows.filter(r=>norm(r.so)&&cnt[norm(r.so)]>1).length;
-}
+function updateStats(){const tot=rows.length,dn=rows.filter(r=>r.completed).length;const cnt={};rows.forEach(r=>{const k=norm(r.so);if(k)cnt[k]=(cnt[k]||0)+1;});document.getElementById('sT').textContent=tot;document.getElementById('sD').textContent=dn;document.getElementById('sP').textContent=tot-dn;document.getElementById('sDp').textContent=rows.filter(r=>norm(r.so)&&cnt[norm(r.so)]>1).length;}
 
 // ══ CSV ══
-function expCSV(){
-  if(document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}
-  const H=['STT','Tên KH','Ngày','Số SO','Ghi chú SO','Link Drive','Thu hồi','Ghi chú'];
-  const R=rows.map((r,i)=>[i+1,`"${(r.customer||'').replace(/"/g,'""')}"`,r.date||'',`"${(r.so||'').replace(/"/g,'""')}"`,`"${(r.soNote||'').replace(/"/g,'""')}"`,r.imgDriveLink||'',r.completed?'Hoàn thành':'Chưa',`"${(r.note||'').replace(/"/g,'""')}"`].join(','));
-  const b=new Blob(['\uFEFF'+[H.join(','),...R].join('\n')],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`VP_${new Date().toLocaleDateString('vi-VN').replace(/\//g,'-')}.csv`;a.click();
-  toast('📥 Đã xuất CSV!','ok');
-}
+function expCSV(){if(document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}const H=['STT','Tên KH','Ngày','Số SO','Ghi chú SO','Link Drive','Thu hồi','Ghi chú'];const R=rows.map((r,i)=>[i+1,`"${(r.customer||'').replace(/"/g,'""')}"`,r.date||'',`"${(r.so||'').replace(/"/g,'""')}"`,`"${(r.soNote||'').replace(/"/g,'""')}"`,r.imgDriveLink||'',r.completed?'Hoàn thành':'Chưa',`"${(r.note||'').replace(/"/g,'""')}"`].join(','));const b=new Blob(['\uFEFF'+[H.join(','),...R].join('\n')],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`VP_${new Date().toLocaleDateString('vi-VN').replace(/\//g,'-')}.csv`;a.click();toast('📥 CSV!','ok');}
 
 // ══ MODALS ══
-function showCfg(){document.getElementById('cfF').value=CFG.folderId||'';document.getElementById('cfS').value=CFG.sheetId||'';document.getElementById('cfgM').classList.add('on');}
-function hideCfg(){document.getElementById('cfgM').classList.remove('on');}
-function saveCfg(){CFG.folderId=document.getElementById('cfF').value.trim();CFG.sheetId=document.getElementById('cfS').value.trim();saveCFG();hideCfg();updateUI();toast('✅ Đã lưu!','ok');}
 let _cb=null;
 function cfShow(t,b,cb){document.getElementById('cfT').textContent=t;document.getElementById('cfB').textContent=b;_cb=cb;document.getElementById('cfM').classList.add('on');document.getElementById('cfOk').onclick=()=>{_cb&&_cb();cfH()};}
 function cfH(){document.getElementById('cfM').classList.remove('on');}
@@ -500,15 +481,13 @@ function toast(msg,t){const el=document.getElementById('toast');el.textContent=m
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('hfi').addEventListener('change',async(e)=>{const f=e.target.files[0];if(!f||!aur)return;await procImg(f,aur);});
   document.addEventListener('paste',async(e)=>{
-    if(document.activeElement.closest('.mb'))return;
+    if(document.activeElement.closest('.mb')||document.activeElement.closest('#setup'))return;
     const items=e.clipboardData?.items;if(!items)return;
-    for(const item of items){if(item.type.startsWith('image/')){e.preventDefault();const file=item.getAsFile();
-      const op=document.querySelector('.iu[style*="flex"]');
-      if(op)await procImg(file,parseInt(op.closest('tr').dataset.id));
-      else if(aur)await procImg(file,aur);
-      else toast('⚠️ Nhấn 📎 ở dòng muốn dán trước','w');break;}}
+    for(const item of items){if(item.type.startsWith('image/')){e.preventDefault();const file=item.getAsFile();const op=document.querySelector('.iu[style*="flex"]');if(op)await procImg(file,parseInt(op.closest('tr').dataset.id));else if(aur)await procImg(file,aur);else toast('⚠️ Nhấn 📎 ở dòng muốn dán','w');break;}}
   });
   window.addEventListener('beforeunload',e=>{if(Object.keys(pend).length>0){e.preventDefault();e.returnValue='';}});
+  // Enter trong ô URL setup
+  document.getElementById('setupUrl').addEventListener('keydown',e=>{if(e.key==='Enter')doSetup();});
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){lbH();document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));}
@@ -516,8 +495,13 @@ document.addEventListener('keydown',e=>{
 });
 
 // ══ START ══
-loadAll();render();updateStats();rechkDup();updateUI();
-autoConn(); // Tự kết nối nếu đã từng đăng nhập
+loadAll();render();updateStats();rechkDup();
+if(SCRIPT_URL){
+  document.getElementById('setup').classList.add('hide');
+  loadFromScript(); // Tự load khi mở app — không cần login!
+} else {
+  // Chưa setup — hiện màn hình setup
+}
 </script>
 </body>
 </html>
