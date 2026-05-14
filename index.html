@@ -150,25 +150,7 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 <body>
 
 <!-- SETUP SCREEN — chỉ hiện lần đầu -->
-<div id="setup">
-  <div class="setup-box">
-    <div class="setup-logo">🏝️</div>
-    <div class="setup-title">Vinpearl Order Tracker</div>
-    <div class="setup-sub">Cần kết nối với Google Apps Script để lưu dữ liệu. Chỉ cần làm 1 lần duy nhất!</div>
-    <div class="setup-steps">
-      <div class="setup-step"><div class="sn">1</div><div class="ss-txt">Mở <a href="https://script.google.com" target="_blank">script.google.com</a> → Dự án mới</div></div>
-      <div class="setup-step"><div class="sn">2</div><div class="ss-txt">Dán toàn bộ code từ file <strong>Code.gs</strong> vào → Lưu (Ctrl+S)</div></div>
-      <div class="setup-step"><div class="sn">3</div><div class="ss-txt">Nhấn <strong>Deploy → New deployment → Web app</strong><br>Execute as: <strong>Me</strong> · Who has access: <strong>Anyone</strong> → Deploy</div></div>
-      <div class="setup-step"><div class="sn">4</div><div class="ss-txt">Copy <strong>Web app URL</strong> dán vào ô dưới → Kết nối</div></div>
-    </div>
-    <div class="setup-inp-wrap">
-      <label>Apps Script Web App URL</label>
-      <input id="setupUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
-    </div>
-    <div class="setup-err" id="setupErr">❌ URL không hợp lệ hoặc không kết nối được.</div>
-    <button class="setup-btn" id="setupBtn" onclick="doSetup()">🔗 Kết nối ngay</button>
-  </div>
-</div>
+<div id="setup" style="display:none;"></div>
 
 <header class="hdr">
   <div class="hdr-brand">
@@ -665,13 +647,13 @@ function toast(msg,t){const el=document.getElementById('toast');el.textContent=m
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('hfi').addEventListener('change',async(e)=>{const f=e.target.files[0];if(!f||!aur)return;await procImg(f,aur);});
   document.addEventListener('paste',async(e)=>{
-    if(document.activeElement.closest('.mb')||document.activeElement.closest('#setup'))return;
+    if(document.activeElement.closest('.mb'))return;
     const items=e.clipboardData?.items;if(!items)return;
     for(const item of items){if(item.type.startsWith('image/')){e.preventDefault();const file=item.getAsFile();const op=document.querySelector('.iu[style*="flex"]');if(op)await procImg(file,parseInt(op.closest('tr').dataset.id));else if(aur)await procImg(file,aur);else toast('⚠️ Nhấn 📎 ở dòng muốn dán','w');break;}}
   });
   window.addEventListener('beforeunload',e=>{if(Object.keys(pend).length>0){e.preventDefault();e.returnValue='';}});
   // Enter trong ô URL setup
-  document.getElementById('setupUrl').addEventListener('keydown',e=>{if(e.key==='Enter')doSetup();});
+
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){lbH();document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));}
@@ -691,18 +673,12 @@ async function migrateOldImages(){
 
 // ══ START ══
 loadAll();render();updateStats();rechkDup();
-// Luôn ẩn màn hình setup nếu đã có URL (hardcoded hoặc từ localStorage)
-if(SCRIPT_URL){
-  document.getElementById('setup').classList.add('hide');
-  localStorage.setItem('vp6_url', SCRIPT_URL); // Lưu vào localStorage luôn
-  migrateOldImages().then(()=>loadFromScript());
-  setInterval(()=>{
-    if(!Object.keys(pend).length&&!document.querySelector('#tb :focus'))
-      loadFromScript().catch(()=>{});
-  },30000);
-} else {
-  // Không có URL → hiện màn hình setup
-}
+localStorage.setItem('vp6_url', SCRIPT_URL);
+migrateOldImages().then(()=>loadFromScript());
+setInterval(()=>{
+  if(!Object.keys(pend).length&&!document.querySelector('#tb :focus'))
+    loadFromScript().catch(()=>{});
+},30000);
 </script>
 </body>
 </html>
