@@ -86,9 +86,10 @@ td:first-child{text-align:center;color:var(--g400);font-weight:700;font-size:11p
 .ed:focus{border-color:var(--gold);background:var(--gold-bg);}
 input[type=date].ed{min-width:124px;color:var(--g800);}
 .cw{position:relative;}
-.cl{position:absolute;top:calc(100% + 2px);left:0;min-width:185px;background:#fff;border:1.5px solid var(--g200);border-radius:7px;box-shadow:var(--shadow);z-index:100;max-height:185px;overflow-y:auto;display:none;}
+.cl{position:absolute;top:calc(100% + 3px);left:0;min-width:185px;background:#fff;border:1.5px solid var(--g200);border-radius:8px;box-shadow:0 8px 24px rgba(11,30,61,.15);z-index:200;max-height:185px;overflow-y:auto;display:none;animation:dropIn .12s ease;}
 .cl.on{display:block;}
-.ci{padding:6px 10px;font-size:11.5px;cursor:pointer;transition:.1s;} .ci:hover{background:var(--gold-bg);}
+.ci{padding:7px 11px;font-size:11.5px;cursor:pointer;transition:.1s;border-radius:4px;margin:1px 3px;} .ci:hover{background:var(--gold-bg);color:var(--navy);}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .ci.m{color:var(--gold);font-weight:700;border-top:1px solid var(--g100);}
 .sg{display:flex;align-items:center;gap:4px;padding:2px 4px;border:1.5px solid transparent;border-radius:6px;}
 .sm{min-width:80px;max-width:98px;} .sn2{color:var(--g600);font-style:italic;}
@@ -267,8 +268,6 @@ async function doSetup(){
       SCRIPT_URL = url;
       localStorage.setItem('vp6_url', url);
       document.getElementById('setup').classList.add('hide');
-      toast('✅ Kết nối thành công!','ok');
-      // Load data từ script
       await loadFromScript();
     } else {
       showSetupErr('Script phản hồi nhưng có lỗi: ' + (d.message||'unknown'));
@@ -302,52 +301,56 @@ async function scriptPostRaw(params){
 // ══ LOAD FROM SCRIPT ══
 async function loadFromScript(){
   if(!SCRIPT_URL) return;
-  setBadge('busy','Đang tải…');
   try{
     const d = await scriptGet({});
-    if(d.status === 'ok' && d.rows){
-      if(d.rows.length > 0){
-        rows = d.rows.map((r,i)=>({...r,id:i+1,imgSrc:'',imgDriveId:r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''}));
-        nid = rows.length+1;
-        saveR(); render(); updateStats(); rechkDup();
-        toast('📊 Đã tải '+rows.length+' đơn!','ok');
-      }else{
-        toast('✅ Sheet trống — nhấn ＋ Thêm dòng','ok');
-      }
+    if(d.status === 'ok' && d.rows && d.rows.length > 0){
+      const newRows = d.rows.map((r,i)=>({...r,id:i+1,imgSrc:'',imgDriveId:r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''}));
+      const sig = r=>({c:r.customer,d:r.date,s:r.so,n:r.note,ok:r.completed});
+      const changed = JSON.stringify(newRows.map(sig)) !== JSON.stringify(rows.map(sig));
+      if(changed){ rows=newRows; nid=rows.length+1; saveR(); smoothRender(); updateStats(); rechkDup(); }
     }
-    setBadge('ok','Đã kết nối');
-  }catch(e){setBadge('ok','Đã kết nối (offline)');toast('⚠️ Dùng dữ liệu local','w');}
+  }catch(e){} // âm thầm bỏ qua lỗi nền
 }
 
 // ══ SYNC ══
-async function syncNow(){
-  if(!SCRIPT_URL){toast('⚠️ Chưa cài đặt script URL','w');return;}
-  if(document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}
-  setBadge('busy','Đang sync…');
+async function syncNow(silent){
+  if(!SCRIPT_URL) return;
+  if(!silent && document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}
   try{
     const d = await scriptPost('sync', rows);
-    if(d.status==='ok'){toast('✅ Đã sync '+rows.length+' đơn!','ok');}
-    else throw new Error(d.message||'error');
-  }catch(e){toast('❌ Lỗi sync: '+e.message,'e');}
-  setBadge('ok','Đã kết nối');
+    if(!silent && d.status==='ok') toast('✅ Đã sync '+rows.length+' đơn!','ok');
+  }catch(e){ if(!silent) toast('❌ Lỗi sync: '+e.message,'e'); }
 }
-function schedSync(){clearTimeout(bgt);if(!SCRIPT_URL)return;bgt=setTimeout(()=>syncNow().catch(()=>{}),4000);}
+// Auto-poll cập nhật từ server mỗi 45 giây (không giật, chỉ update khi có thay đổi)
+setInterval(()=>{
+  if(SCRIPT_URL && !Object.keys(pend).length && !document.querySelector('#tb :focus'))
+    loadFromScript().catch(()=>{});
+}, 45000);
+
+// Smooth render: chỉ re-render nếu không có field đang focus
+function smoothRender(){
+  const focused=document.querySelector('#tb :focus');
+  if(focused){
+    // Có field đang gõ → chỉ update stats, không đụng DOM bảng
+    updateStats();rechkDup();return;
+  }
+  render();
+}
+function schedSync(){clearTimeout(bgt);if(!SCRIPT_URL)return;bgt=setTimeout(()=>syncNow(true).catch(()=>{}),1000);}
 
 // ══ UPLOAD ẢNH QUA SCRIPT ══
 async function uploadViaScript(base64,fileName,so){
-  setBadge('busy','Đang upload ảnh…');
   try{
     const d = await scriptPostRaw({action:'uploadImage',imageData:base64,fileName,so});
-    setBadge('ok','Đã kết nối');
     if(d.status==='ok') return d;
     throw new Error(d.message);
-  }catch(e){setBadge('ok','Đã kết nối');throw e;}
+  }catch(e){throw e;}
 }
 
 function setBadge(type,txt){
-  const el=document.getElementById('bdg');
-  el.className='badge '+(type==='busy'?'b-busy':'b-ok');
-  document.getElementById('bdgTxt').textContent=txt;
+  // Badge luôn xanh "Đã kết nối", không thay đổi khi sync nền
+  document.getElementById('bdg').className='badge b-ok';
+  document.getElementById('bdgTxt').textContent='Đã kết nối';
 }
 
 // ══ CUSTOMER ══
@@ -373,11 +376,21 @@ function saveRow(id){
   if(ns){const dp=rows.find(r=>r.id!==id&&norm(r.so)===ns);
     if(dp){toast('❌ Số SO "'+dr.so+'" đã tồn tại!','e');
       const tr=document.querySelector(`tr[data-id="${id}"]`);if(tr){const inp=tr.querySelector('.sm');inp.style.borderColor='var(--red)';inp.style.background='var(--red-lt)';setTimeout(()=>{inp.style.borderColor='';inp.style.background='';},1800);inp.focus();}
-      return;}}
-  const row=rows.find(r=>r.id===id);if(!row)return;
+      return false;}}
+  const row=rows.find(r=>r.id===id);if(!row)return false;
   Object.assign(row,dr);saveR();updateStats();rechkDup();clUs(id);
   const tr=document.querySelector(`tr[data-id="${id}"]`);if(tr){tr.style.background='#DCFCE7';setTimeout(()=>tr.style.background='',700);}
   toast('✅ Đã lưu!','ok');schedSync();
+  return true;
+}
+// Enter = lưu dòng hiện tại + tự thêm dòng mới
+function saveAndNext(id){
+  const ok=saveRow(id);
+  if(ok){
+    setTimeout(()=>{
+      addRow(); // Thêm dòng mới và focus
+    },120);
+  }
 }
 
 // ══ ROWS ══
@@ -392,7 +405,22 @@ function rechkDup(){const cnt={};rows.forEach(r=>{const k=norm(r.so);if(k)cnt[k]
 const norm=s=>s?.trim().toUpperCase()||'';
 
 // ══ DROPDOWN ══
-function shDr(id){document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));const tr=document.querySelector(`tr[data-id="${id}"]`);if(!tr)return;bldDr(tr.querySelector('.ci-inp').value,tr.querySelector('.cl'),id);tr.querySelector('.cl').classList.add('on');}
+function shDr(id){
+  document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));
+  const tr=document.querySelector(`tr[data-id="${id}"]`);if(!tr)return;
+  const inp=tr.querySelector('.ci-inp');
+  const list=tr.querySelector('.cl');
+  bldDr(inp.value,list,id);
+  // Smart positioning: show above if not enough space below
+  const rect=inp.getBoundingClientRect();
+  const spaceBelow=window.innerHeight-rect.bottom;
+  if(spaceBelow<200&&rect.top>200){
+    list.style.top='auto';list.style.bottom='calc(100% + 3px)';list.style.maxHeight='180px';
+  }else{
+    list.style.top='calc(100% + 3px)';list.style.bottom='auto';list.style.maxHeight='180px';
+  }
+  list.classList.add('on');
+}
 function bldDr(q,l,id){const lq=q.trim().toLowerCase();const fl=customers.filter(c=>!lq||c.toLowerCase().includes(lq));const ao=(q.trim()&&!customers.find(c=>c.toLowerCase()===lq))?`<div class="ci m" onclick="aAP(${id},'${esc(q.trim())}')">＋ Thêm "${esc(q.trim())}"</div>`:'';l.innerHTML=fl.map(c=>`<div class="ci" onclick="pkC(${id},'${esc(c)}')">${esc(c)}</div>`).join('')+ao+`<div class="ci m" onclick="showCM()">⚙️ Quản lý</div>`;}
 function pkC(id,v){setD(id,'customer',v);const tr=document.querySelector(`tr[data-id="${id}"]`);if(tr){tr.querySelector('.ci-inp').value=v;tr.querySelector('.cl').classList.remove('on');}}
 function aAP(id,v){if(v&&!customers.includes(v)){customers.push(v);localStorage.setItem('vp6_custs',JSON.stringify(customers));}pkC(id,v);}
@@ -410,8 +438,8 @@ async function procImg(file,rid){
     r.imgSrc=b64;saveR();
     const tr=document.querySelector(`tr[data-id="${rid}"]`);
     if(tr){const th=tr.querySelector('.ith'),up=tr.querySelector('.iu'),t=tr.querySelector('.it');th.src=b64;th.style.display='block';up.style.display='none';t.textContent='🙈 Ẩn ảnh';th.onclick=()=>lbO(b64);}
-    toast('🖼️ Đã thêm ảnh! Đang upload…','i');
-    // Upload qua Apps Script
+    toast('🖼️ Đã thêm ảnh!','ok');
+    // Upload âm thầm lên Drive
     try{
       const d=await uploadViaScript(b64,file.name,r.so||'');
       r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;r.imgSrc=d.thumbUrl||b64;saveR();
@@ -420,8 +448,8 @@ async function procImg(file,rid){
         const th2=tr2.querySelector('.ith');th2.src=r.imgSrc;th2.onclick=()=>lbO(r.imgSrc);
         let a=tr2.querySelector('.dl');if(!a){a=document.createElement('a');a.className='dl';a.target='_blank';a.title='Drive';tr2.querySelector('.ic').appendChild(a);}a.href=d.viewUrl;a.textContent='☁️';
       }
-      toast('☁️ Ảnh đã lên Drive!','ok');
-    }catch(e){toast('⚠️ Lỗi upload: '+e.message,'w');}
+    // âm thầm xong
+    }catch(e){} // bỏ qua lỗi nền
   };
   rdr.readAsDataURL(file);
 }
@@ -450,12 +478,12 @@ function render(){
     const opts=customers.map(c=>`<div class="ci" onclick="pkC(${r.id},'${esc(c)}')">${esc(c)}</div>`).join('')+`<div class="ci m" onclick="showCM()">⚙️ Quản lý</div>`;
     return `<tr data-id="${r.id}" class="${cls}">
 <td>${i+1}</td>
-<td><div class="cw"><input class="ed ci-inp" value="${esc(d.customer||'')}" placeholder="Chọn hoặc gõ…" oninput="setD(${r.id},'customer',this.value);bldDr(this.value,this.closest('.cw').querySelector('.cl'),${r.id})" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}" onfocus="shDr(${r.id})" style="min-width:132px;"><div class="cl">${opts}</div></div></td>
+<td><div class="cw"><input class="ed ci-inp" value="${esc(d.customer||'')}" placeholder="Chọn hoặc gõ…" oninput="setD(${r.id},'customer',this.value);bldDr(this.value,this.closest('.cw').querySelector('.cl'),${r.id})" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}" onfocus="shDr(${r.id})" style="min-width:132px;"><div class="cl">${opts}</div></div></td>
 <td><input type="date" class="ed" value="${esc(r.date||'')}" onchange="aS(${r.id},'date',this.value)"></td>
-<td><div class="sg"><input class="ed sm" value="${esc(d.so||'')}" placeholder="Số SO…" oninput="setD(${r.id},'so',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}"><span class="di" title="Trùng SO!" style="${isDup?'display:inline':'display:none'}">⚠️</span><input class="ed sn2" value="${esc(d.soNote||'')}" placeholder="ghi chú SO…" oninput="setD(${r.id},'soNote',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}"></div></td>
+<td><div class="sg"><input class="ed sm" value="${esc(d.so||'')}" placeholder="Số SO…" oninput="setD(${r.id},'so',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}"><span class="di" title="Trùng SO!" style="${isDup?'display:inline':'display:none'}">⚠️</span><input class="ed sn2" value="${esc(d.soNote||'')}" placeholder="ghi chú SO…" oninput="setD(${r.id},'soNote',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}"></div></td>
 <td><div class="ic"><button class="it" onclick="togImg(${r.id})">${r.imgSrc?'👁️ Xem ảnh':'📎 Thêm ảnh'}</button><img class="ith" alt=""><div class="iu" ondragover="event.preventDefault();this.classList.add('dg')" ondragleave="this.classList.remove('dg')" ondrop="dropI(event,${r.id})" onclick="trigU(${r.id})"><span class="ui">📁</span><div class="uh">Click/Paste<br>Kéo thả</div></div>${r.imgDriveId?`<a class="dl" href="${r.imgDriveLink}" target="_blank">☁️</a>`:''}</div></td>
 <td class="cc"><input type="checkbox" ${r.completed?'checked':''} onchange="aS(${r.id},'completed',this.checked);this.closest('tr').classList.toggle('cr',this.checked)"></td>
-<td><input class="ed" value="${esc(d.note||'')}" placeholder="Ghi chú…" oninput="setD(${r.id},'note',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveRow(${r.id})}" style="min-width:108px;"></td>
+<td><input class="ed" value="${esc(d.note||'')}" placeholder="Ghi chú…" oninput="setD(${r.id},'note',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}" style="min-width:108px;"></td>
 <td><div class="ra"><button class="sb" onclick="saveRow(${r.id})" title="Lưu (Enter)">💾</button><button class="db" onclick="delRow(${r.id})">🗑️</button></div></td>
 </tr>`;
   }).join('');
