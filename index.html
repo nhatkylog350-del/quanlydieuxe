@@ -70,7 +70,7 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:#EEF1F8;color:var(--g800
 #si:focus{border-color:var(--gold);background:#fff;}
 .srch-x{position:absolute;right:7px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--g400);font-size:13px;display:none;} .srch-x.v{display:block;}
 .tbar-r{display:flex;gap:6px;}
-.tw{background:#fff;border-radius:0 0 10px 10px;overflow:auto;box-shadow:var(--shadow);max-height:calc(100vh - 256px);}
+.tw{background:#fff;border-radius:0 0 10px 10px;overflow:auto;box-shadow:var(--shadow);height:calc(100vh - 210px);}
 table{width:100%;border-collapse:collapse;font-size:11.5px;}
 thead th{background:var(--navy);color:var(--gold);padding:9px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;position:sticky;top:0;z-index:10;}
 thead th:first-child{text-align:center;width:40px;}
@@ -99,7 +99,7 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 .it:hover{border-color:var(--gold);}
 .ith{width:42px;height:32px;object-fit:cover;border-radius:4px;cursor:pointer;border:1.5px solid var(--g200);display:none;}
 .ith:hover{border-color:var(--gold);transform:scale(1.1);}
-.iu{display:none;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border:2px dashed var(--g200);border-radius:6px;cursor:pointer;min-width:100px;}
+.iu{display:none;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border:2px dashed var(--g200);border-radius:6px;min-width:140px;}
 .iu:hover,.iu.dg{border-color:var(--gold);background:var(--gold-bg);}
 .ui{font-size:13px;} .uh{font-size:9px;color:var(--g400);text-align:center;line-height:1.5;}
 .dl{font-size:13px;text-decoration:none;opacity:.7;} .dl:hover{opacity:1;}
@@ -429,6 +429,38 @@ document.addEventListener('click',e=>{if(!e.target.closest('.cw'))document.query
 // ══ IMAGE ══
 function togImg(id){const r=rows.find(r=>r.id===id);if(!r)return;const tr=document.querySelector(`tr[data-id="${id}"]`);const t=tr.querySelector('.it'),th=tr.querySelector('.ith'),up=tr.querySelector('.iu');if(r.imgSrc){if(th.style.display==='block'){th.style.display='none';t.textContent='👁️ Xem ảnh';}else{th.style.display='block';t.textContent='🙈 Ẩn ảnh';}}else{if(up.style.display==='flex'){up.style.display='none';t.textContent='📎 Thêm ảnh';}else{up.style.display='flex';t.textContent='✕ Đóng';aur=id;}}}
 function trigU(id){aur=id;const f=document.getElementById('hfi');f.value='';f.click();}
+
+// Dán ảnh từ clipboard dùng Clipboard API (đáng tin cậy hơn paste event)
+async function pasteImg(id){
+  aur=id;
+  try{
+    // Thử Clipboard API mới trước
+    if(navigator.clipboard && navigator.clipboard.read){
+      const items=await navigator.clipboard.read();
+      for(const item of items){
+        for(const type of item.types){
+          if(type.startsWith('image/')){
+            const blob=await item.getType(type);
+            const file=new File([blob],'paste_'+Date.now()+'.png',{type});
+            await procImg(file,id);
+            return;
+          }
+        }
+      }
+      toast('⚠️ Không có ảnh trong clipboard. Hãy copy ảnh rồi thử lại.','w');
+    } else {
+      // Fallback: mở file picker
+      trigU(id);
+    }
+  }catch(e){
+    // Nếu bị từ chối quyền → fallback file picker
+    if(e.name==='NotAllowedError'){
+      toast('⚠️ Cần cho phép quyền clipboard. Thử Ctrl+V trực tiếp hoặc chọn file.','w');
+    } else {
+      trigU(id); // fallback
+    }
+  }
+}
 async function procImg(file,rid){
   const r=rows.find(r=>r.id===rid);if(!r)return;
   // Preview local trước
@@ -481,7 +513,18 @@ function render(){
 <td><div class="cw"><input class="ed ci-inp" value="${esc(d.customer||'')}" placeholder="Chọn hoặc gõ…" oninput="setD(${r.id},'customer',this.value);bldDr(this.value,this.closest('.cw').querySelector('.cl'),${r.id})" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}" onfocus="shDr(${r.id})" style="min-width:132px;"><div class="cl">${opts}</div></div></td>
 <td><input type="date" class="ed" value="${esc(r.date||'')}" onchange="aS(${r.id},'date',this.value)"></td>
 <td><div class="sg"><input class="ed sm" value="${esc(d.so||'')}" placeholder="Số SO…" oninput="setD(${r.id},'so',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}"><span class="di" title="Trùng SO!" style="${isDup?'display:inline':'display:none'}">⚠️</span><input class="ed sn2" value="${esc(d.soNote||'')}" placeholder="ghi chú SO…" oninput="setD(${r.id},'soNote',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}"></div></td>
-<td><div class="ic"><button class="it" onclick="togImg(${r.id})">${r.imgSrc?'👁️ Xem ảnh':'📎 Thêm ảnh'}</button><img class="ith" alt=""><div class="iu" ondragover="event.preventDefault();this.classList.add('dg')" ondragleave="this.classList.remove('dg')" ondrop="dropI(event,${r.id})" onclick="trigU(${r.id})"><span class="ui">📁</span><div class="uh">Click/Paste<br>Kéo thả</div></div>${r.imgDriveId?`<a class="dl" href="${r.imgDriveLink}" target="_blank">☁️</a>`:''}</div></td>
+<td><div class="ic">
+    <button class="it" onclick="togImg(${r.id})">${r.imgSrc?'👁️ Xem ảnh':'📎 Thêm ảnh'}</button>
+    <img class="ith" alt="">
+    <div class="iu" ondragover="event.preventDefault();this.classList.add('dg')" ondragleave="this.classList.remove('dg')" ondrop="dropI(event,${r.id})">
+      <div style="display:flex;gap:5px;margin-bottom:3px;">
+        <button onclick="trigU(${r.id})" style="padding:3px 8px;border:1px solid var(--g200);border-radius:4px;background:#fff;cursor:pointer;font-size:10px;font-family:inherit;color:var(--g600);">📁 Chọn</button>
+        <button onclick="pasteImg(${r.id})" style="padding:3px 8px;border:1px solid var(--gold);border-radius:4px;background:var(--gold-bg);cursor:pointer;font-size:10px;font-family:inherit;color:var(--navy);font-weight:700;">📋 Dán</button>
+      </div>
+      <div class="uh">Hoặc kéo thả ảnh vào đây</div>
+    </div>
+    ${r.imgDriveId?`<a class="dl" href="${r.imgDriveLink}" target="_blank">☁️</a>`:''}
+  </div></td>
 <td class="cc"><input type="checkbox" ${r.completed?'checked':''} onchange="aS(${r.id},'completed',this.checked);this.closest('tr').classList.toggle('cr',this.checked)"></td>
 <td><input class="ed" value="${esc(d.note||'')}" placeholder="Ghi chú…" oninput="setD(${r.id},'note',this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();saveAndNext(${r.id})}" style="min-width:108px;"></td>
 <td><div class="ra"><button class="sb" onclick="saveRow(${r.id})" title="Lưu (Enter)">💾</button><button class="db" onclick="delRow(${r.id})">🗑️</button></div></td>
