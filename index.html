@@ -691,16 +691,17 @@ async function migrateOldImages(){
 
 // ══ START ══
 loadAll();render();updateStats();rechkDup();
+// Luôn ẩn màn hình setup nếu đã có URL (hardcoded hoặc từ localStorage)
 if(SCRIPT_URL){
   document.getElementById('setup').classList.add('hide');
+  localStorage.setItem('vp6_url', SCRIPT_URL); // Lưu vào localStorage luôn
   migrateOldImages().then(()=>loadFromScript());
-  // Auto-poll 30 giây — không giật, không hiện gì
   setInterval(()=>{
     if(!Object.keys(pend).length&&!document.querySelector('#tb :focus'))
       loadFromScript().catch(()=>{});
   },30000);
 } else {
-  // Chưa setup — hiện màn hình setup
+  // Không có URL → hiện màn hình setup
 }
 </script>
 </body>
