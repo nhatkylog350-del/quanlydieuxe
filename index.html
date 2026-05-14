@@ -249,7 +249,14 @@ let aur=null,lbSrcs=[],lbIdx=0,sq='',bgt=null;
 function loadAll(){
   SCRIPT_URL = localStorage.getItem('vp6_url') || 'https://script.google.com/macros/s/AKfycbwdic46NGK8GTaZFAYC-TW6E1OwUZCahyhMcCGPZ5pcTMsnFdoxpJSS2A4ampJDqNLxTw/exec';
   try{const s=localStorage.getItem('vp6_custs');if(s)customers=JSON.parse(s);}catch(e){}
-  try{const s=localStorage.getItem('vp6_rows');if(s){rows=JSON.parse(s);nid=rows.length?Math.max(...rows.map(r=>r.id))+1:1;}}catch(e){}
+  // Thử key hiện tại, nếu rỗng thì tìm trong key cũ
+  const KEYS=['vp6_rows','vp5_rows','vp_rows4','vp_rows3','vp_rows2','vp_rows'];
+  for(const key of KEYS){
+    try{
+      const s=localStorage.getItem(key);
+      if(s){const p=JSON.parse(s);if(p&&p.length>0){rows=p;nid=Math.max(...p.map(r=>r.id))+1;if(key!=='vp6_rows')saveR();return;}}
+    }catch(e){}
+  }
 }
 function saveR(){localStorage.setItem('vp6_rows',JSON.stringify(rows));}
 
@@ -310,23 +317,42 @@ async function loadFromScript(){
   if(!SCRIPT_URL) return;
   try{
     const d = await scriptGet({});
-    if(d.status === 'ok' && d.rows && d.rows.length > 0){
-      const newRows = d.rows.map((r,i)=>{
-        // Giữ lại ảnh từ local (match theo SO)
-        const local = rows.find(lr => lr.so && lr.so === r.so);
-        const imgSrc = local?.imgSrc || r.imgThumb || '';
-        return {
-          ...r, id:i+1,
-          imgSrc,
-          imgThumb: r.imgThumb || local?.imgThumb || '',
-          imgDriveId: r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''
-        };
-      });
-      const sig = r=>({c:r.customer,d:r.date,s:r.so,n:r.note,ok:r.completed});
-      const changed = JSON.stringify(newRows.map(sig)) !== JSON.stringify(rows.map(sig));
-      if(changed){ rows=newRows; nid=rows.length+1; saveR(); smoothRender(); updateStats(); rechkDup(); }
+    if(d.status !== 'ok') return;
+    const sheetRows = d.rows || [];
+
+    // Nếu Sheets trống nhưng local có data → đẩy local lên Sheets
+    if(sheetRows.length === 0){
+      if(rows.length > 0) schedSync(); // push local lên Sheets
+      return;
+    }
+
+    // Sheets có data → merge với local (giữ ảnh từ local nếu có)
+    const newRows = sheetRows.map((r,i)=>{
+      const local = rows.find(lr => lr.so && lr.so === r.so);
+      return {
+        ...r, id:i+1,
+        imgSrc: local?.imgSrc || r.imgThumb || '',
+        imgThumb: r.imgThumb || local?.imgThumb || '',
+        imgDriveId: r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''
+      };
+    });
+
+    const sig = r=>({c:r.customer,d:r.date,s:r.so,n:r.note,ok:r.completed});
+    const sheetSig = JSON.stringify(newRows.map(sig));
+    const localSig = JSON.stringify(rows.map(sig));
+
+    if(sheetSig !== localSig){
+      // Sheets khác local → dùng Sheets (máy khác đã cập nhật)
+      // Nhưng chỉ khi Sheets có ít nhất bằng số dòng local (không giảm)
+      if(newRows.length >= rows.length || rows.length === 0){
+        rows=newRows; nid=rows.length+1; saveR(); smoothRender(); updateStats(); rechkDup();
+      } else {
+        // Sheets ít dòng hơn local → local mới hơn, push lên Sheets
+        schedSync();
+      }
     }
   }catch(e){}
+}
 }
 
 // ══ SYNC ══
@@ -338,11 +364,6 @@ async function syncNow(silent){
     if(!silent && d.status==='ok') toast('✅ Đã sync '+rows.length+' đơn!','ok');
   }catch(e){ if(!silent) toast('❌ Lỗi sync: '+e.message,'e'); }
 }
-// Auto-poll cập nhật từ server mỗi 45 giây (không giật, chỉ update khi có thay đổi)
-setInterval(()=>{
-  if(SCRIPT_URL && !Object.keys(pend).length && !document.querySelector('#tb :focus'))
-    loadFromScript().catch(()=>{});
-}, 45000);
 
 // Smooth render: chỉ re-render nếu không có field đang focus
 function smoothRender(){
@@ -672,8 +693,12 @@ async function migrateOldImages(){
 loadAll();render();updateStats();rechkDup();
 if(SCRIPT_URL){
   document.getElementById('setup').classList.add('hide');
-  // Tạo thumbnail cho ảnh cũ chưa có thumb (chạy 1 lần trên máy có ảnh)
   migrateOldImages().then(()=>loadFromScript());
+  // Auto-poll 30 giây — không giật, không hiện gì
+  setInterval(()=>{
+    if(!Object.keys(pend).length&&!document.querySelector('#tb :focus'))
+      loadFromScript().catch(()=>{});
+  },30000);
 } else {
   // Chưa setup — hiện màn hình setup
 }
