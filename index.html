@@ -299,17 +299,33 @@ async function scriptPostRaw(params){
 }
 
 // ══ LOAD FROM SCRIPT ══
+// Lấy thumbnail URL từ Drive link
+function driveThumb(link){
+  if(!link) return '';
+  const m=link.match(/\/d\/([^/]+)/);
+  return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`:'';
+}
+
 async function loadFromScript(){
   if(!SCRIPT_URL) return;
   try{
     const d = await scriptGet({});
     if(d.status === 'ok' && d.rows && d.rows.length > 0){
-      const newRows = d.rows.map((r,i)=>({...r,id:i+1,imgSrc:'',imgDriveId:r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''}));
+      const newRows = d.rows.map((r,i)=>{
+        // Giữ lại ảnh từ local (match theo SO)
+        const local = rows.find(lr => lr.so && lr.so === r.so);
+        const imgSrc = local?.imgSrc || driveThumb(r.imgDriveLink) || '';
+        return {
+          ...r, id:i+1,
+          imgSrc,
+          imgDriveId: r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''
+        };
+      });
       const sig = r=>({c:r.customer,d:r.date,s:r.so,n:r.note,ok:r.completed});
       const changed = JSON.stringify(newRows.map(sig)) !== JSON.stringify(rows.map(sig));
       if(changed){ rows=newRows; nid=rows.length+1; saveR(); smoothRender(); updateStats(); rechkDup(); }
     }
-  }catch(e){} // âm thầm bỏ qua lỗi nền
+  }catch(e){}
 }
 
 // ══ SYNC ══
@@ -474,7 +490,8 @@ async function procImg(file,rid){
     // Upload âm thầm lên Drive
     try{
       const d=await uploadViaScript(b64,file.name,r.so||'');
-      r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;r.imgSrc=d.thumbUrl||b64;saveR();
+      const thumbUrl = driveThumb(d.viewUrl) || b64;
+      r.imgDriveId=d.fileId; r.imgDriveLink=d.viewUrl; r.imgSrc=thumbUrl; saveR();
       const tr2=document.querySelector(`tr[data-id="${rid}"]`);
       if(tr2){
         const th2=tr2.querySelector('.ith');th2.src=r.imgSrc;th2.onclick=()=>lbO(r.imgSrc);
