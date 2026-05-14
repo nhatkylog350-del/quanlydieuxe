@@ -247,7 +247,7 @@ let aur=null,lbSrcs=[],lbIdx=0,sq='',bgt=null;
 
 // ══ PERSIST ══
 function loadAll(){
-  SCRIPT_URL = localStorage.getItem('vp6_url') || 'https://script.google.com/macros/s/AKfycbyLFuf3gRJ_n3sHy7N5qG87ctSyd-aStGL8-zfSJGFQOl6AG0HCJeysw1VWPHD7K35SaQ/exec';
+  SCRIPT_URL = localStorage.getItem('vp6_url') || 'https://script.google.com/macros/s/AKfycbwdic46NGK8GTaZFAYC-TW6E1OwUZCahyhMcCGPZ5pcTMsnFdoxpJSS2A4ampJDqNLxTw/exec';
   try{const s=localStorage.getItem('vp6_custs');if(s)customers=JSON.parse(s);}catch(e){}
   try{const s=localStorage.getItem('vp6_rows');if(s){rows=JSON.parse(s);nid=rows.length?Math.max(...rows.map(r=>r.id))+1:1;}}catch(e){}
 }
