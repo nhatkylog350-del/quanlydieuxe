@@ -314,10 +314,11 @@ async function loadFromScript(){
       const newRows = d.rows.map((r,i)=>{
         // Giữ lại ảnh từ local (match theo SO)
         const local = rows.find(lr => lr.so && lr.so === r.so);
-        const imgSrc = local?.imgSrc || driveThumb(r.imgDriveLink) || '';
+        const imgSrc = local?.imgSrc || r.imgThumb || '';
         return {
           ...r, id:i+1,
           imgSrc,
+          imgThumb: r.imgThumb || local?.imgThumb || '',
           imgDriveId: r.imgDriveLink?r.imgDriveLink.match(/\/d\/([^/]+)/)?.[1]||'':''
         };
       });
@@ -333,7 +334,7 @@ async function syncNow(silent){
   if(!SCRIPT_URL) return;
   if(!silent && document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}
   try{
-    const d = await scriptPost('sync', rows);
+    const d = await scriptPost('sync', rows.map(r=>({...r,imgSrc:'',imgThumb:r.imgThumb||''})));
     if(!silent && d.status==='ok') toast('✅ Đã sync '+rows.length+' đơn!','ok');
   }catch(e){ if(!silent) toast('❌ Lỗi sync: '+e.message,'e'); }
 }
@@ -411,7 +412,7 @@ function saveAndNext(id){
 
 // ══ ROWS ══
 function addRow(){
-  const r={id:nid++,customer:'',date:'',so:'',soNote:'',imgSrc:'',imgDriveId:'',imgDriveLink:'',completed:false,note:''};
+  const r={id:nid++,customer:'',date:'',so:'',soNote:'',imgSrc:'',imgThumb:'',imgDriveId:'',imgDriveLink:'',completed:false,note:''};
   rows.push(r);saveR();render();updateStats();
   setTimeout(()=>{const tr=document.querySelector(`tr[data-id="${r.id}"]`);if(tr){iP(r.id);tr.classList.add('us');document.getElementById('sh').style.display='block';tr.scrollIntoView({behavior:'smooth',block:'center'});tr.querySelector('.ci-inp')?.focus();}},80);
 }
@@ -477,28 +478,46 @@ async function pasteImg(id){
     }
   }
 }
+// Tạo thumbnail nhỏ (120px, JPEG 0.5) để lưu vào Sheets
+function createThumb(src){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=120;
+      let w=img.width,h=img.height;
+      const r=Math.min(MAX/w,MAX/h,1);
+      w=Math.round(w*r);h=Math.round(h*r);
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      res(c.toDataURL('image/jpeg',0.5));
+    };
+    img.onerror=()=>res('');
+    img.src=src;
+  });
+}
+
 async function procImg(file,rid){
   const r=rows.find(r=>r.id===rid);if(!r)return;
-  // Preview local trước
   const rdr=new FileReader();
   rdr.onload=async(e)=>{
     const b64=e.target.result;
-    r.imgSrc=b64;saveR();
+    // Tạo thumbnail nhỏ để lưu vào Sheets
+    const thumb=await createThumb(b64);
+    r.imgSrc=thumb||b64; r.imgThumb=thumb; saveR();
     const tr=document.querySelector(`tr[data-id="${rid}"]`);
-    if(tr){const th=tr.querySelector('.ith'),up=tr.querySelector('.iu'),t=tr.querySelector('.it');th.src=b64;th.style.display='block';up.style.display='none';t.textContent='🙈 Ẩn ảnh';th.onclick=()=>lbO(b64);}
+    if(tr){const th=tr.querySelector('.ith'),up=tr.querySelector('.iu'),t=tr.querySelector('.it');th.src=r.imgSrc;th.style.display='block';up.style.display='none';t.textContent='🙈 Ẩn ảnh';th.onclick=()=>lbO(r.imgSrc);}
     toast('🖼️ Đã thêm ảnh!','ok');
-    // Upload âm thầm lên Drive
+    schedSync(); // Sync thumbnail lên Sheets ngay
+    // Upload ảnh gốc lên Drive âm thầm
     try{
       const d=await uploadViaScript(b64,file.name,r.so||'');
-      const thumbUrl = driveThumb(d.viewUrl) || b64;
-      r.imgDriveId=d.fileId; r.imgDriveLink=d.viewUrl; r.imgSrc=thumbUrl; saveR();
+      r.imgDriveId=d.fileId; r.imgDriveLink=d.viewUrl; saveR();
       const tr2=document.querySelector(`tr[data-id="${rid}"]`);
       if(tr2){
-        const th2=tr2.querySelector('.ith');th2.src=r.imgSrc;th2.onclick=()=>lbO(r.imgSrc);
         let a=tr2.querySelector('.dl');if(!a){a=document.createElement('a');a.className='dl';a.target='_blank';a.title='Drive';tr2.querySelector('.ic').appendChild(a);}a.href=d.viewUrl;a.textContent='☁️';
       }
-    // âm thầm xong
-    }catch(e){} // bỏ qua lỗi nền
+    }catch(e){}
   };
   rdr.readAsDataURL(file);
 }
