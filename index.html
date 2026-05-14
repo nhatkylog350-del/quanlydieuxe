@@ -444,137 +444,140 @@ function aAP(id,v){if(v&&!customers.includes(v)){customers.push(v);localStorage.
 document.addEventListener('click',e=>{if(!e.target.closest('.cw'))document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));});
 
 // ══ IMAGE ══
-function togImg(id){const r=rows.find(r=>r.id===id);if(!r)return;const tr=document.querySelector(`tr[data-id="${id}"]`);const t=tr.querySelector('.it'),th=tr.querySelector('.ith'),up=tr.querySelector('.iu');if(r.imgSrc){if(th.style.display==='block'){th.style.display='none';t.textContent='👁️ Xem ảnh';}else{th.style.display='block';t.textContent='🙈 Ẩn ảnh';}}else{if(up.style.display==='flex'){up.style.display='none';t.textContent='📎 Thêm ảnh';}else{up.style.display='flex';t.textContent='✕ Đóng';aur=id;}}}
-function trigU(id){aur=id;const f=document.getElementById('hfi');f.value='';f.click();}
-
-// Dán ảnh từ clipboard dùng Clipboard API (đáng tin cậy hơn paste event)
-async function pasteImg(id){
-  aur=id;
-  try{
-    // Thử Clipboard API mới trước
-    if(navigator.clipboard && navigator.clipboard.read){
-      const items=await navigator.clipboard.read();
-      for(const item of items){
-        for(const type of item.types){
-          if(type.startsWith('image/')){
-            const blob=await item.getType(type);
-            const file=new File([blob],'paste_'+Date.now()+'.png',{type});
-            await procImg(file,id);
-            return;
-          }
-        }
-      }
-      toast('⚠️ Không có ảnh trong clipboard. Hãy copy ảnh rồi thử lại.','w');
-    } else {
-      // Fallback: mở file picker
-      trigU(id);
-    }
-  }catch(e){
-    // Nếu bị từ chối quyền → fallback file picker
-    if(e.name==='NotAllowedError'){
-      toast('⚠️ Cần cho phép quyền clipboard. Thử Ctrl+V trực tiếp hoặc chọn file.','w');
-    } else {
-      trigU(id); // fallback
-    }
-  }
-}
-// Nén ảnh trước khi upload lên Drive (max 1024px, JPEG 0.75 ≈ 100-300KB)
-function compressForUpload(src){
+// ══ IMAGE UTILS ══
+function canvasResize(src,maxW,maxH,quality){
   return new Promise(res=>{
     const img=new Image();
     img.onload=()=>{
-      const MAX=1024;
       let w=img.width,h=img.height;
-      if(w>MAX||h>MAX){const r=Math.min(MAX/w,MAX/h);w=Math.round(w*r);h=Math.round(h*r);}
+      const ratio=Math.min(maxW/w,maxH/h,1);
+      w=Math.round(w*ratio);h=Math.round(h*ratio);
       const c=document.createElement('canvas');c.width=w;c.height=h;
       c.getContext('2d').drawImage(img,0,0,w,h);
-      res(c.toDataURL('image/jpeg',0.75));
-    };
-    img.onerror=()=>res(src);
-    img.src=src;
-  });
-}
-
-// Retry upload cho ảnh chưa lên Drive
-async function retryUpload(id){
-  const r=rows.find(r=>r.id===id);
-  if(!r||!r.imgSrc){toast('⚠️ Không có ảnh để upload','w');return;}
-  toast('☁️ Đang upload lên Drive…','i');
-  try{
-    const compressed=await compressForUpload(r.imgSrc);
-    const d=await uploadViaScript(compressed,'retry_'+id+'.jpg',r.so||'');
-    r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;saveR();
-    // Cập nhật UI
-    const tr=document.querySelector(`tr[data-id="${id}"]`);
-    if(tr){
-      let a=tr.querySelector('.dl');
-      if(!a){a=document.createElement('a');a.className='dl';a.target='_blank';a.title='Drive';tr.querySelector('.ic').appendChild(a);}
-      a.href=d.viewUrl;a.textContent='☁️';
-      const rb=tr.querySelector('.retry-btn');if(rb)rb.remove();
-    }
-    toast('✅ Đã lưu ảnh lên Drive!','ok');
-    schedSync();
-  }catch(e){toast('❌ Upload thất bại: '+e.message,'e');}
-}
-
-async function procImg(file,rid){
-  return new Promise(res=>{
-    const img=new Image();
-    img.onload=()=>{
-      const MAX=120;
-      let w=img.width,h=img.height;
-      const r=Math.min(MAX/w,MAX/h,1);
-      w=Math.round(w*r);h=Math.round(h*r);
-      const c=document.createElement('canvas');
-      c.width=w;c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      res(c.toDataURL('image/jpeg',0.5));
+      res(c.toDataURL('image/jpeg',quality));
     };
     img.onerror=()=>res('');
     img.src=src;
   });
 }
+// Thumbnail nhỏ (120px) để lưu Sheets — ~3KB
+function createThumb(src){return canvasResize(src,120,120,0.5);}
+// Nén cho Drive upload (1024px, 75%) — ~100-200KB
+function compressForUpload(src){return canvasResize(src,1024,1024,0.75);}
 
+// ══ IMAGE TOGGLE ══
+function togImg(id){
+  const r=rows.find(r=>r.id===id);if(!r)return;
+  const tr=document.querySelector(`tr[data-id="${id}"]`);
+  const btn=tr.querySelector('.it'),thumb=tr.querySelector('.ith'),zone=tr.querySelector('.iu');
+  if(r.imgSrc){
+    const showing=thumb.style.display==='block';
+    thumb.style.display=showing?'none':'block';
+    btn.textContent=showing?'👁️ Xem ảnh':'🙈 Ẩn ảnh';
+  } else {
+    const open=zone.style.display==='flex';
+    zone.style.display=open?'none':'flex';
+    btn.textContent=open?'📎 Thêm ảnh':'✕ Đóng';
+    if(!open){aur=id;} // ghi nhớ dòng đang mở để paste
+  }
+}
+
+// ══ FILE PICKER ══
+function trigU(id){aur=id;const f=document.getElementById('hfi');f.value='';f.click();}
+
+// ══ CLIPBOARD PASTE (nút 📋) ══
+async function pasteImg(id){
+  aur=id;
+  // Thử Clipboard API
+  if(navigator.clipboard&&navigator.clipboard.read){
+    try{
+      const items=await navigator.clipboard.read();
+      for(const item of items){
+        for(const type of item.types){
+          if(type.startsWith('image/')){
+            const blob=await item.getType(type);
+            await procImg(new File([blob],'paste.png',{type}),id);
+            return;
+          }
+        }
+      }
+      toast('⚠️ Copy ảnh trước rồi nhấn 📋 lại','w');
+    }catch(err){
+      if(err.name==='NotAllowedError')toast('⚠️ Cần cấp quyền clipboard. Hãy dùng Ctrl+V','w');
+      else toast('⚠️ Lỗi: '+err.message,'w');
+    }
+  } else {
+    toast('⚠️ Trình duyệt không hỗ trợ — dùng Ctrl+V hoặc chọn file','w');
+  }
+}
+
+// ══ RETRY DRIVE UPLOAD ══
+async function retryUpload(id){
+  const r=rows.find(r=>r.id===id);
+  if(!r||!r.imgSrc){toast('⚠️ Không có ảnh','w');return;}
+  toast('☁️ Đang upload lên Drive…','i');
+  try{
+    const compressed=await compressForUpload(r.imgSrc);
+    const d=await uploadViaScript(compressed,'VP_'+r.so+'_retry.jpg',r.so||'');
+    r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;saveR();
+    render();schedSync();
+    toast('✅ Đã lưu ảnh lên Drive!','ok');
+  }catch(e){toast('❌ Thất bại: '+e.message,'e');}
+}
+
+// ══ PROCESS IMAGE (từ mọi nguồn: file picker, paste, kéo thả) ══
 async function procImg(file,rid){
   const r=rows.find(r=>r.id===rid);if(!r)return;
-  const rdr=new FileReader();
-  rdr.onload=async(e)=>{
-    const b64=e.target.result;
-    // Tạo thumbnail nhỏ để lưu vào Sheets
-    const thumb=await createThumb(b64);
-    r.imgSrc=thumb||b64; r.imgThumb=thumb; saveR();
+  const reader=new FileReader();
+  reader.onload=async(ev)=>{
+    const raw=ev.target.result;
+    // 1. Tạo thumbnail nhỏ để dùng trong app và lưu Sheets
+    const thumb=await createThumb(raw);
+    r.imgSrc=thumb||raw;
+    r.imgThumb=thumb;
+    saveR();
+    // Cập nhật UI
     const tr=document.querySelector(`tr[data-id="${rid}"]`);
-    if(tr){const th=tr.querySelector('.ith'),up=tr.querySelector('.iu'),t=tr.querySelector('.it');th.src=r.imgSrc;th.style.display='block';up.style.display='none';t.textContent='🙈 Ẩn ảnh';th.onclick=()=>lbO(r.imgSrc);}
+    if(tr){
+      const th=tr.querySelector('.ith'),zone=tr.querySelector('.iu'),btn=tr.querySelector('.it');
+      th.src=r.imgSrc;th.style.display='block';
+      zone.style.display='none';btn.textContent='🙈 Ẩn ảnh';
+      th.onclick=()=>lbO(r.imgSrc);
+    }
     toast('🖼️ Đã thêm ảnh!','ok');
-    schedSync(); // Sync thumbnail lên Sheets ngay
-    // Upload ảnh lên Drive (nén trước)
+    schedSync(); // Sync thumbnail lên Sheets ngay (máy khác sẽ thấy)
+    // 2. Upload ảnh nén lên Drive (âm thầm)
     try{
-      const compressed=await compressForUpload(r.imgSrc);
-      const d=await uploadViaScript(compressed,file.name,r.so||'');
-      r.imgDriveId=d.fileId; r.imgDriveLink=d.viewUrl; saveR();
+      const compressed=await compressForUpload(raw); // dùng raw gốc, không phải thumb
+      const d=await uploadViaScript(compressed,file.name||'image.jpg',r.so||'');
+      r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;saveR();
       const tr2=document.querySelector(`tr[data-id="${rid}"]`);
       if(tr2){
-        let a=tr2.querySelector('.dl');if(!a){a=document.createElement('a');a.className='dl';a.target='_blank';a.title='Xem trên Drive';tr2.querySelector('.ic').appendChild(a);}
+        let a=tr2.querySelector('.dl');
+        if(!a){a=document.createElement('a');a.className='dl';a.target='_blank';a.title='Xem trên Drive';tr2.querySelector('.ic').appendChild(a);}
         a.href=d.viewUrl;a.textContent='☁️';
-        const rb=tr2.querySelector('.retry-btn');if(rb)rb.remove();
       }
       schedSync();
-    }catch(e){
-      toast('⚠️ Chưa lên Drive được — nhấn ☁️↑ để thử lại','w');
-      // Thêm nút retry
+    }catch(err){
+      // Hiện nút retry nếu Drive upload thất bại
       const tr2=document.querySelector(`tr[data-id="${rid}"]`);
       if(tr2&&!tr2.querySelector('.retry-btn')){
         const rb=document.createElement('button');
-        rb.className='retry-btn';rb.title='Retry upload lên Drive';
-        rb.style='padding:2px 6px;border:1px solid #F59E0B;border-radius:4px;background:#FFF8DC;cursor:pointer;font-size:10px;';
-        rb.textContent='☁️↑';rb.onclick=()=>retryUpload(rid);
+        rb.className='retry-btn';rb.textContent='☁️↑';rb.title='Retry upload Drive';
+        rb.style='padding:2px 6px;border:1px solid #F59E0B;border-radius:4px;background:#FFF8DC;cursor:pointer;font-size:10px;margin-left:2px;';
+        rb.onclick=()=>retryUpload(rid);
         tr2.querySelector('.ic').appendChild(rb);
       }
     }
   };
-  rdr.readAsDataURL(file);
+  reader.readAsDataURL(file);
 }
-function dropI(e,id){e.preventDefault();e.currentTarget.classList.remove('dg');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))procImg(f,id);}
+
+function dropI(e,id){
+  e.preventDefault();e.currentTarget.classList.remove('dg');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/'))procImg(f,id);
+}
 
 // ══ LB ══
 function lbO(s){lbSrcs=rows.filter(r=>r.imgSrc).map(r=>r.imgSrc);lbIdx=lbSrcs.indexOf(s);if(lbIdx<0)lbIdx=0;document.getElementById('lbi').src=s;document.getElementById('lb').classList.add('on');document.body.style.overflow='hidden';document.getElementById('lbp').style.display=lbSrcs.length>1?'flex':'none';document.getElementById('lbnx').style.display=lbSrcs.length>1?'flex':'none';}
