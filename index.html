@@ -69,27 +69,26 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 .sm{min-width:80px;max-width:98px;}.sn2{color:var(--g600);font-style:italic;}
 .di{font-size:12px;display:none;cursor:help;}.dr .di{display:inline;}
 .ic{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
-.it{padding:3px 7px;border:1.5px solid var(--g200);border-radius:5px;background:#fff;cursor:pointer;font-size:10.5px;font-weight:600;font-family:inherit;color:var(--g600);transition:.15s;white-space:nowrap;}
-.it:hover{border-color:var(--gold);}
-.ith{width:42px;height:32px;object-fit:cover;border-radius:4px;cursor:pointer;border:1.5px solid var(--g200);display:none;}
+.it{padding:4px 10px;border:1.5px solid var(--g200);border-radius:6px;background:#fff;cursor:pointer;font-size:11px;font-weight:600;font-family:inherit;color:var(--g600);transition:.15s;white-space:nowrap;}
+.it:hover{border-color:var(--gold);color:var(--navy);}
+.ith{width:46px;height:34px;object-fit:cover;border-radius:5px;cursor:pointer;border:1.5px solid var(--g200);display:none;box-shadow:0 1px 4px rgba(0,0,0,.1);}
 .ith:hover{border-color:var(--gold);transform:scale(1.1);}
-.iu{display:none;flex-direction:column;align-items:center;gap:4px;padding:8px 10px;border:2px dashed var(--g200);border-radius:6px;min-width:130px;}
+.iu{display:none;flex-direction:column;align-items:center;gap:5px;padding:8px 12px;border:2px dashed var(--g200);border-radius:8px;min-width:140px;background:var(--g50);}
 .iu:hover,.iu.dg{border-color:var(--gold);background:var(--gold-bg);}
 .iu-btns{display:flex;gap:5px;}
-.ib{padding:3px 8px;border-radius:4px;font-family:inherit;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--g200);background:#fff;color:var(--g600);}
-.ib.p{border-color:var(--gold);background:var(--gold-bg);color:var(--navy);}
-.ib:hover{opacity:.8;}
-.uh{font-size:9px;color:var(--g400);text-align:center;}
-.dl{font-size:13px;text-decoration:none;opacity:.7;}.dl:hover{opacity:1;}
-.rb{padding:2px 6px;border:1px solid var(--dup-bdr);border-radius:4px;background:var(--dup-bg);cursor:pointer;font-size:10px;font-family:inherit;color:#92400E;}
+.ib{padding:4px 10px;border-radius:5px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--g200);background:#fff;color:var(--g600);transition:.15s;}
+.ib:hover{opacity:.85;}.ib.p{border-color:var(--gold);background:var(--gold-bg);color:var(--navy);}
+.uh{font-size:9.5px;color:var(--g400);text-align:center;}
+.dl{font-size:11px;font-weight:600;text-decoration:none;color:#059669;padding:3px 7px;border:1px solid #34D399;border-radius:4px;background:#ECFDF5;} .dl:hover{background:#D1FAE5;}
+.rb{padding:3px 7px;border:1px solid var(--dup-bdr);border-radius:4px;background:var(--dup-bg);cursor:pointer;font-size:10px;font-family:inherit;color:#92400E;}
 .cc{display:flex;align-items:center;justify-content:center;}
-.cc input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--navy);}
-.ra{display:flex;gap:3px;justify-content:center;}
-.sb{width:25px;height:25px;border:none;border-radius:5px;background:#DCFCE7;color:#16A34A;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.cc input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--navy);}
+.ra{display:flex;gap:4px;justify-content:center;}
+.sb{min-width:46px;height:26px;border:none;border-radius:5px;background:#DCFCE7;color:#16A34A;cursor:pointer;font-size:10px;font-weight:700;font-family:inherit;padding:0 6px;}
 .sb:hover{background:#16A34A;color:#fff;}
 .us .sb{background:#16A34A;color:#fff;animation:pulse .9s infinite alternate;}
 @keyframes pulse{from{box-shadow:0 0 0 2px rgba(22,163,74,.2)}to{box-shadow:0 0 0 5px rgba(22,163,74,.3)}}
-.db{width:25px;height:25px;border:none;border-radius:5px;background:var(--red-lt);color:var(--red);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.db{width:26px;height:26px;border:none;border-radius:5px;background:var(--red-lt);color:var(--red);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
 .db:hover{background:var(--red);color:#fff;}
 .empty{text-align:center;padding:44px;color:var(--g400);}
 .ei{font-size:36px;margin-bottom:8px;}.empty p{font-size:12px;line-height:1.7;}
@@ -130,29 +129,29 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 <header class="hdr">
   <div class="hdr-brand">
     <div class="hdr-icon">&#127965;</div>
-    <div><div class="hdr-name">VINPEARL ORDER TRACKER</div><div class="hdr-sub">HE THONG QUAN LY DON HANG</div></div>
+    <div><div class="hdr-name">VINPEARL ORDER TRACKER</div><div class="hdr-sub">HỆ THỐNG QUẢN LÝ ĐƠN HÀNG</div></div>
   </div>
   <div class="hdr-right">
-    <div class="badge b-ok" id="bdg"><div class="bdot"></div><span id="bdgTxt">Da ket noi</span></div>
+    <div class="badge b-ok" id="bdg"><div class="bdot"></div><span id="bdgTxt">Đã kết nối</span></div>
     <button class="btn btn-ghost" onclick="showCM()" title="Khach hang">&#128101;</button>
-    <button class="btn btn-ghost" onclick="showCfg()" title="Cai dat">&#9881;</button>
+    <button class="btn btn-ghost" onclick="showCfg()" title="Cài đặt">&#9881;</button>
   </div>
 </header>
 
 <main class="main">
   <div class="stats">
-    <div class="stat"><div class="si">&#128230;</div><div><div class="sl">Tong don</div><div class="sv" id="sT">0</div></div></div>
-    <div class="stat s2"><div class="si">&#9989;</div><div><div class="sl">Hoan thanh</div><div class="sv" id="sD">0</div></div></div>
-    <div class="stat s3"><div class="si">&#128260;</div><div><div class="sl">Dang xu ly</div><div class="sv" id="sP">0</div></div></div>
-    <div class="stat s4"><div class="si">&#9888;</div><div><div class="sl">SO trung</div><div class="sv" id="sDp">0</div></div></div>
+    <div class="stat"><div class="si">&#128230;</div><div><div class="sl">Tổng đơn</div><div class="sv" id="sT">0</div></div></div>
+    <div class="stat s2"><div class="si">&#9989;</div><div><div class="sl">Hoàn thành</div><div class="sv" id="sD">0</div></div></div>
+    <div class="stat s3"><div class="si">&#128260;</div><div><div class="sl">Đang xử lý</div><div class="sv" id="sP">0</div></div></div>
+    <div class="stat s4"><div class="si">&#9888;</div><div><div class="sl">SO trùng</div><div class="sv" id="sDp">0</div></div></div>
   </div>
   <div class="tbar">
     <div class="tbar-l">
-      <div class="tbar-title">&#128203; Bang thong ke Vinpearl</div>
-      <div class="srch"><span class="srch-i">&#128269;</span><input id="si" placeholder="Tim KH, so SO, ghi chu..." oninput="onSrch(this.value)"><span class="srch-x" id="sx" onclick="clrSrch()">&#10005;</span></div>
+      <div class="tbar-title">&#128203; Bảng thống kê Vinpearl</div>
+      <div class="srch"><span class="srch-i">&#128269;</span><input id="si" placeholder="Tìm KH, số SO, ghi chú..." oninput="onSrch(this.value)"><span class="srch-x" id="sx" onclick="clrSrch()">&#10005;</span></div>
     </div>
     <div class="tbar-r">
-      <button class="btn btn-navy" onclick="addRow()">+ Them dong</button>
+      <button class="btn btn-navy" onclick="addRow()">＋ Thêm dòng</button>
       <button class="btn btn-grn" onclick="syncNow(false)">&#128202; Sync</button>
       <button class="btn btn-gold" onclick="expCSV()">&#128229; CSV</button>
     </div>
@@ -160,15 +159,15 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
   <div class="tw">
     <table>
       <thead><tr>
-        <th>STT</th><th style="min-width:148px;">Ten Khach Hang</th><th style="min-width:126px;">Ngay di hang</th>
-        <th style="min-width:215px;">So SO &amp; Ghi chu SO</th><th style="min-width:185px;">Hinh anh</th>
-        <th class="tc">Thu hoi chung tu</th><th style="min-width:120px;">Ghi chu</th><th class="ta">Luu/Xoa</th>
+        <th>STT</th><th style="min-width:148px;">Tên Khách Hàng</th><th style="min-width:126px;">Ngày đi hàng</th>
+        <th style="min-width:215px;">Số SO &amp; Ghi chú SO</th><th style="min-width:185px;">Hình ảnh</th>
+        <th class="tc">Thu hồi chứng từ</th><th style="min-width:120px;">Ghi chú</th><th class="ta">Lưu/Xoá</th>
       </tr></thead>
       <tbody id="tb"></tbody>
     </table>
-    <div id="es" class="empty"><div class="ei">&#128230;</div><p>Chua co don hang. Nhan <strong>+ Them dong</strong></p></div>
-    <div id="nr" class="nores" style="display:none;">Khong tim thay ket qua</div>
-    <div class="sh" id="sh" style="display:none;">&#128161; Nhan &#128190; hoac Enter de luu . Vien vang = chua luu</div>
+    <div id="es" class="empty"><div class="ei">&#128230;</div><p>Chua co don hang. Nhan <strong>＋ Thêm dòng</strong></p></div>
+    <div id="nr" class="nores" style="display:none;">Không tìm thấy kết quả</div>
+    <div class="sh" id="sh" style="display:none;">&#128161; Nhấn Alt+S để lưu · Enter = xuống dòng · Viền vàng = chưa lưu</div>
   </div>
 </main>
 
@@ -176,26 +175,26 @@ input[type=date].ed{min-width:124px;color:var(--g800);}
 
 <!-- CUSTOMER MGR -->
 <div class="mb" id="cmM" onclick="if(event.target===this)hideCM()">
-  <div class="md w"><h3>Danh sach khach hang</h3><p class="msub">Quan ly menu xo xuong</p>
-    <div class="fg"><label>Danh sach (x de xoa)</label><div class="ctgs" id="ctgs"></div></div>
+  <div class="md w"><h3>Danh sách khách hàng</h3><p class="msub">Quản lý menu xổ xuống</p>
+    <div class="fg"><label>Danh sách (× để xoá)</label><div class="ctgs" id="ctgs"></div></div>
     <div class="fg" style="display:flex;gap:7px;"><input id="nc" placeholder="Ten khach hang moi..." style="flex:1;" onkeydown="if(event.key==='Enter')addC()"><button class="btn btn-navy" onclick="addC()">+</button></div>
-    <div class="ma"><button class="btn btn-c" onclick="hideCM()">Dong</button></div>
+    <div class="ma"><button class="btn btn-c" onclick="hideCM()">Đóng</button></div>
   </div>
 </div>
 
 <!-- CFG -->
 <div class="mb" id="cfgM" onclick="if(event.target===this)hideCfg()">
-  <div class="md"><h3>Cai dat</h3><p class="msub">Drive Folder ID va Sheet ID</p>
-    <div class="fg"><label>Drive Folder ID (thu muc luu anh)</label><input id="cfF"></div>
-    <div class="fg"><label>Google Sheet ID (de trong = tu tao)</label><input id="cfS"></div>
-    <div class="ma"><button class="btn btn-c" onclick="hideCfg()">Huy</button><button class="btn btn-navy" onclick="saveCfg()">Luu</button></div>
+  <div class="md"><h3>Cài đặt</h3><p class="msub">Drive Folder ID va Sheet ID</p>
+    <div class="fg"><label>Drive Folder ID (thư mục lưu ảnh)</label><input id="cfF"></div>
+    <div class="fg"><label>Google Sheet ID (để trống = tự tạo)</label><input id="cfS"></div>
+    <div class="ma"><button class="btn btn-c" onclick="hideCfg()">Huỷ</button><button class="btn btn-navy" onclick="saveCfg()">Lưu</button></div>
   </div>
 </div>
 
 <!-- CONFIRM -->
 <div class="mb" id="cfmM">
   <div class="md" style="max-width:300px;"><h3 id="cfmT">Xac nhan</h3><p id="cfmB" style="font-size:11.5px;color:var(--g600);margin:6px 0 13px;"></p>
-    <div class="ma"><button class="btn btn-c" onclick="cfmH()">Huy</button><button class="btn" id="cfmOk" style="background:var(--red);color:#fff;">Xoa</button></div>
+    <div class="ma"><button class="btn btn-c" onclick="cfmH()">Huỷ</button><button class="btn" id="cfmOk" style="background:var(--red);color:#fff;">Xoá</button></div>
   </div>
 </div>
 
@@ -263,11 +262,11 @@ async function loadFromScript(){
 
 async function syncNow(silent){
   if(!SCRIPT_URL)return;
-  if(!silent&&document.querySelector('tr.us')){toast('Con dong chua luu!','w');return;}
+  if(!silent&&document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}
   try{
     const payload=rows.map(r=>({...r,imgSrc:'',imgThumb:r.imgThumb||''}));
     const d=await sPost('sync',payload);
-    if(!silent&&d.status==='ok')toast('Da sync '+rows.length+' don!','ok');
+    if(!silent&&d.status==='ok')toast('📊 Đã sync '+rows.length+' đơn!','ok');
     if(d.sheetId){CFG.sheetId=d.sheetId;saveCFG();}
   }catch(e){if(!silent)toast('Loi sync: '+e.message,'e');}
 }
@@ -306,11 +305,11 @@ function togImg(id){
   if(r.imgSrc){
     const show=thumb.style.display==='block';
     thumb.style.display=show?'none':'block';
-    btn.textContent=show?'Xem anh':'An anh';
+    btn.textContent=show?'&#128064; Xem ảnh':'&#128247; Ảnh';
   }else{
     const open=zone.style.display==='flex';
     zone.style.display=open?'none':'flex';
-    btn.textContent=open?'+ Anh':'Dong';
+    btn.textContent=open?'&#128247; Ảnh':'✕ Đóng';
     if(!open)aur=id;
   }
 }
@@ -330,7 +329,7 @@ async function pasteImg(id){
           }
         }
       }
-      toast('Hay copy anh truoc roi nhan Dan','w');
+      toast('⚠️ Copy ảnh trước rồi nhấn Dán','w');
     }catch(err){toast('Dan anh: '+err.message,'w');}
   }else{toast('Dung Ctrl+V hoac chon file','w');}
 }
@@ -340,7 +339,7 @@ async function retryDrive(id){
   try{
     const comp=await compressImg(r.imgSrc);
     const d=await sPostRaw({action:'uploadImage',imageData:comp,fileName:'VP_'+r.so+'_retry.jpg',so:r.so||''});
-    if(d.status==='ok'){r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;saveR();render();schedSync();toast('Da len Drive!','ok');}
+    if(d.status==='ok'){r.imgDriveId=d.fileId;r.imgDriveLink=d.viewUrl;saveR();render();schedSync();toast('☁️ Đã lên Drive!','ok');}
     else throw new Error(d.message);
   }catch(e){toast('Loi Drive: '+e.message,'e');}
 }
@@ -355,7 +354,7 @@ async function procImg(file,rid){
     const tr=document.querySelector('tr[data-id="'+rid+'"]');
     if(tr){
       const th=tr.querySelector('.ith'),zone=tr.querySelector('.iu'),btn=tr.querySelector('.it');
-      th.src=r.imgSrc;th.style.display='block';zone.style.display='none';btn.textContent='An anh';
+      th.src=r.imgSrc;th.style.display='block';zone.style.display='none';btn.textContent='&#128247; Ảnh';
       th.onclick=()=>lbO(r.imgSrc);
     }
     toast('Da them anh!','ok');
@@ -393,7 +392,7 @@ function lbN(d,e){e.stopPropagation();lbIdx=(lbIdx+d+lbSrcs.length)%lbSrcs.lengt
 function showCM(){renderCT();document.getElementById('cmM').classList.add('on');}
 function hideCM(){document.getElementById('cmM').classList.remove('on');}
 function renderCT(){document.getElementById('ctgs').innerHTML=customers.map((c,i)=>'<div class="ctg">'+esc(c)+'<span class="cx" onclick="rmC('+i+')">x</span></div>').join('');}
-function addC(){const v=document.getElementById('nc').value.trim();if(!v||customers.includes(v))return;customers.push(v);localStorage.setItem('vp_custs',JSON.stringify(customers));document.getElementById('nc').value='';renderCT();render();toast('Da them!','ok');}
+function addC(){const v=document.getElementById('nc').value.trim();if(!v||customers.includes(v))return;customers.push(v);localStorage.setItem('vp_custs',JSON.stringify(customers));document.getElementById('nc').value='';renderCT();render();toast('✅ Đã thêm!','ok');}
 function rmC(i){customers.splice(i,1);localStorage.setItem('vp_custs',JSON.stringify(customers));renderCT();render();}
 function shDr(id){
   document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));
@@ -409,7 +408,7 @@ function bldDr(q,list,id){
   const lq=q.trim().toLowerCase();
   const fl=customers.filter(c=>!lq||c.toLowerCase().includes(lq));
   const ao=(q.trim()&&!customers.find(c=>c.toLowerCase()===lq))?'<div class="ci m" onclick="aAP('+id+',\''+esc(q.trim())+'\')">+ Them "'+esc(q.trim())+'"</div>':'';
-  list.innerHTML=fl.map(c=>'<div class="ci" onclick="pkC('+id+',\''+esc(c)+'\')">'+esc(c)+'</div>').join('')+ao+'<div class="ci m" onclick="showCM()">Quan ly danh sach</div>';
+  list.innerHTML=fl.map(c=>'<div class="ci" onclick="pkC('+id+',\''+esc(c)+'\')">'+esc(c)+'</div>').join('')+ao+'<div class="ci m" onclick="showCM()">Quản lý danh sách</div>';
 }
 function pkC(id,v){setD(id,'customer',v);const tr=document.querySelector('tr[data-id="'+id+'"]');if(tr){tr.querySelector('.ci-inp').value=v;tr.querySelector('.cl').classList.remove('on');}}
 function aAP(id,v){if(v&&!customers.includes(v)){customers.push(v);localStorage.setItem('vp_custs',JSON.stringify(customers));}pkC(id,v);}
@@ -436,11 +435,24 @@ function saveRow(id){
   const row=rows.find(r=>r.id===id);if(!row)return false;
   Object.assign(row,dr);saveR();updateStats();rechkDup();clUs(id);
   const tr=document.querySelector('tr[data-id="'+id+'"]');if(tr){tr.style.background='#DCFCE7';setTimeout(()=>tr.style.background='',700);}
-  toast('Da luu!','ok');schedSync();
+  toast('✅ Đã lưu!','ok');schedSync();
   return true;
 }
 
-function saveAndNext(id){const ok=saveRow(id);if(ok)setTimeout(()=>addRow(),120);}
+function saveAndNext(id){saveRow(id);}
+
+// Di chuyển focus xuống dòng tiếp theo (Enter key)
+function nextRow(id){
+  const fl=getFilt();
+  const idx=fl.findIndex(r=>r.id===id);
+  if(idx>=0&&idx<fl.length-1){
+    const nextId=fl[idx+1].id;
+    const nextTr=document.querySelector('tr[data-id="'+nextId+'"]');
+    if(nextTr){nextTr.querySelector('.ci-inp')?.focus();nextTr.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  } else {
+    addRow(); // dòng cuối → thêm mới
+  }
+}
 
 // === ROWS ===
 function addRow(){
@@ -448,7 +460,7 @@ function addRow(){
   rows.push(r);saveR();render();updateStats();
   setTimeout(()=>{const tr=document.querySelector('tr[data-id="'+r.id+'"]');if(tr){iP(r.id);tr.classList.add('us');document.getElementById('sh').style.display='block';tr.scrollIntoView({behavior:'smooth',block:'center'});tr.querySelector('.ci-inp')?.focus();}},80);
 }
-function delRow(id){cfShow('Xoa dong nay?','Khong the hoan tac.',()=>{delete pend[id];rows=rows.filter(r=>r.id!==id);saveR();render();updateStats();schedSync();if(!document.querySelector('tr.us'))document.getElementById('sh').style.display='none';});}
+function delRow(id){cfShow('Xoá dòng này?','Không thể hoàn tác.',()=>{delete pend[id];rows=rows.filter(r=>r.id!==id);saveR();render();updateStats();schedSync();if(!document.querySelector('tr.us'))document.getElementById('sh').style.display='none';});}
 function aS(id,f,v){const r=rows.find(r=>r.id===id);if(!r)return;r[f]=v;if(pend[id])pend[id][f]=v;saveR();if(f==='completed')updateStats();schedSync();}
 function rechkDup(){const cnt={};rows.forEach(r=>{const k=norm(r.so);if(k)cnt[k]=(cnt[k]||0)+1;});rows.forEach(r=>{const dp=norm(r.so)&&cnt[norm(r.so)]>1;const tr=document.querySelector('tr[data-id="'+r.id+'"]');if(tr)tr.classList.toggle('dr',dp);});document.getElementById('sDp').textContent=rows.filter(r=>norm(r.so)&&cnt[norm(r.so)]>1).length;}
 const norm=s=>s?.trim().toUpperCase()||'';
@@ -468,16 +480,16 @@ function render(){
     const cls=[isDup?'dr':'',r.completed?'cr':'',isUs?'us':''].filter(Boolean).join(' ');
     const d=pend[r.id]||r;
     const opts=customers.map(c=>'<div class="ci" onclick="pkC('+r.id+',\''+esc(c)+'\')">'+esc(c)+'</div>').join('')+'<div class="ci m" onclick="showCM()">Quan ly</div>';
-    const enterKey='if(event.key===\'Enter\'){event.preventDefault();saveAndNext('+r.id+')}';
+    const enterKey="if(event.key==='Enter'){event.preventDefault();nextRow("+r.id+")}";
     return '<tr data-id="'+r.id+'" class="'+cls+'">'
       +'<td>'+(i+1)+'</td>'
       +'<td><div class="cw"><input class="ed ci-inp" value="'+esc(d.customer||'')+'" placeholder="Chon hoac go..." oninput="setD('+r.id+',\'customer\',this.value);bldDr(this.value,this.closest(\'.cw\').querySelector(\'.cl\'),'+r.id+')" onkeydown="'+enterKey+'" onfocus="shDr('+r.id+')" style="min-width:132px;"><div class="cl">'+opts+'</div></div></td>'
       +'<td><input type="date" class="ed" value="'+esc(r.date||'')+'" onchange="aS('+r.id+',\'date\',this.value)"></td>'
       +'<td><div class="sg"><input class="ed sm" value="'+esc(d.so||'')+'" placeholder="So SO..." oninput="setD('+r.id+',\'so\',this.value)" onkeydown="'+enterKey+'"><span class="di" title="Trung SO!" style="'+(isDup?'display:inline':'display:none')+'">!</span><input class="ed sn2" value="'+esc(d.soNote||'')+'" placeholder="ghi chu SO..." oninput="setD('+r.id+',\'soNote\',this.value)" onkeydown="'+enterKey+'"></div></td>'
-      +'<td><div class="ic"><button class="it" onclick="togImg('+r.id+')">'+(r.imgSrc?'An anh':'+ Anh')+'</button><img class="ith" alt=""><div class="iu" ondragover="event.preventDefault();this.classList.add(\'dg\')" ondragleave="this.classList.remove(\'dg\')" ondrop="dropI(event,'+r.id+')"><div class="iu-btns"><button class="ib" onclick="trigU('+r.id+')">Chon file</button><button class="ib p" onclick="pasteImg('+r.id+')">Dan anh</button></div><div class="uh">Hoac keo tha vao day</div></div>'+(r.imgDriveId?'<a class="dl" href="'+r.imgDriveLink+'" target="_blank">Drive</a>':r.imgSrc?'<button class="rb" onclick="retryDrive('+r.id+')" title="Upload Drive">Drive?</button>':'')+'</div></td>'
+      +'<td><div class="ic"><button class="it" onclick="togImg('+r.id+')">'+(r.imgSrc?'&#128247; Ảnh':'&#128247; Ảnh')+'</button><img class="ith" alt=""><div class="iu" ondragover="event.preventDefault();this.classList.add(\'dg\')" ondragleave="this.classList.remove(\'dg\')" ondrop="dropI(event,'+r.id+')"><div class="iu-btns"><button class="ib" onclick="trigU('+r.id+')">Chon file</button><button class="ib p" onclick="pasteImg('+r.id+')">Dan anh</button></div><div class="uh">Hoac keo tha vao day</div></div>'+(r.imgDriveId?'<a class="dl" href="'+r.imgDriveLink+'" target="_blank">Drive</a>':r.imgSrc?'<button class="rb" onclick="retryDrive('+r.id+')" title="Upload Drive">Drive?</button>':'')+'</div></td>'
       +'<td class="cc"><input type="checkbox"'+(r.completed?' checked':'')+' onchange="aS('+r.id+',\'completed\',this.checked);this.closest(\'tr\').classList.toggle(\'cr\',this.checked)"></td>'
-      +'<td><input class="ed" value="'+esc(d.note||'')+'" placeholder="Ghi chu..." oninput="setD('+r.id+',\'note\',this.value)" onkeydown="'+enterKey+'" style="min-width:108px;"></td>'
-      +'<td><div class="ra"><button class="sb" onclick="saveRow('+r.id+')" title="Luu (Enter)">S</button><button class="db" onclick="delRow('+r.id+')">X</button></div></td>'
+      +'<td><input class="ed" value="'+esc(d.note||'')+'" placeholder="Ghi chú..." oninput="setD('+r.id+',\'note\',this.value)" onkeydown="'+enterKey+'" style="min-width:108px;"></td>'
+      +'<td><div class="ra"><button class="sb" onclick="saveRow('+r.id+')" title="Lưu (Alt+S)">&#128190; Lưu</button><button class="db" onclick="delRow('+r.id+')" title="Xoá">&#128465;</button></div></td>'
       +'</tr>';
   }).join('');
   rows.forEach(r=>{if(!r.imgSrc)return;const tr=document.querySelector('tr[data-id="'+r.id+'"]');if(!tr)return;const img=tr.querySelector('.ith');img.src=r.imgSrc;img.onclick=()=>lbO(r.imgSrc);});
@@ -489,12 +501,12 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'
 function updateStats(){const tot=rows.length,dn=rows.filter(r=>r.completed).length;const cnt={};rows.forEach(r=>{const k=norm(r.so);if(k)cnt[k]=(cnt[k]||0)+1;});document.getElementById('sT').textContent=tot;document.getElementById('sD').textContent=dn;document.getElementById('sP').textContent=tot-dn;document.getElementById('sDp').textContent=rows.filter(r=>norm(r.so)&&cnt[norm(r.so)]>1).length;}
 
 // === CSV ===
-function expCSV(){if(document.querySelector('tr.us')){toast('Con dong chua luu!','w');return;}const H=['STT','Ten KH','Ngay','So SO','Ghi chu SO','Link Drive','Thu hoi','Ghi chu'];const R=rows.map((r,i)=>[i+1,'"'+(r.customer||'').replace(/"/g,'""')+'"',r.date||'','"'+(r.so||'').replace(/"/g,'""')+'"','"'+(r.soNote||'').replace(/"/g,'""')+'"',r.imgDriveLink||'',r.completed?'Hoan thanh':'Chua','"'+(r.note||'').replace(/"/g,'""')+'"'].join(','));const b=new Blob(['\uFEFF'+[H.join(','),...R].join('\n')],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='VP_'+new Date().toLocaleDateString('vi-VN').replace(/\//g,'-')+'.csv';a.click();toast('Da xuat CSV!','ok');}
+function expCSV(){if(document.querySelector('tr.us')){toast('⚠️ Còn dòng chưa lưu!','w');return;}const H=['STT','Ten KH','Ngay','So SO','Ghi chú SO','Link Drive','Thu hoi','Ghi chú'];const R=rows.map((r,i)=>[i+1,'"'+(r.customer||'').replace(/"/g,'""')+'"',r.date||'','"'+(r.so||'').replace(/"/g,'""')+'"','"'+(r.soNote||'').replace(/"/g,'""')+'"',r.imgDriveLink||'',r.completed?'Hoàn thành':'Chua','"'+(r.note||'').replace(/"/g,'""')+'"'].join(','));const b=new Blob(['\uFEFF'+[H.join(','),...R].join('\n')],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='VP_'+new Date().toLocaleDateString('vi-VN').replace(/\//g,'-')+'.csv';a.click();toast('📥 Đã xuất CSV!','ok');}
 
 // === MODALS ===
 function showCfg(){document.getElementById('cfF').value=CFG.folderId||'';document.getElementById('cfS').value=CFG.sheetId||'';document.getElementById('cfgM').classList.add('on');}
 function hideCfg(){document.getElementById('cfgM').classList.remove('on');}
-function saveCfg(){CFG.folderId=document.getElementById('cfF').value.trim();CFG.sheetId=document.getElementById('cfS').value.trim();saveCFG();hideCfg();toast('Da luu!','ok');}
+function saveCfg(){CFG.folderId=document.getElementById('cfF').value.trim();CFG.sheetId=document.getElementById('cfS').value.trim();saveCFG();hideCfg();toast('✅ Đã lưu!','ok');}
 let _cb=null;
 function cfShow(t,b,cb){document.getElementById('cfmT').textContent=t;document.getElementById('cfmB').textContent=b;_cb=cb;document.getElementById('cfmM').classList.add('on');document.getElementById('cfmOk').onclick=()=>{_cb&&_cb();cfmH()};}
 function cfmH(){document.getElementById('cfmM').classList.remove('on');}
@@ -511,11 +523,23 @@ document.addEventListener('DOMContentLoaded',()=>{
       const op=document.querySelector('.iu[style*="flex"]');
       if(op)await procImg(file,parseInt(op.closest('tr').dataset.id));
       else if(aur)await procImg(file,aur);
-      else toast('Nhan + Anh o dong muon dan truoc','w');break;}}
+      else toast('⚠️ Nhấn 📷 Ảnh ở dòng muốn dán trước','w');break;}}
   });
   window.addEventListener('beforeunload',e=>{if(Object.keys(pend).length>0){e.preventDefault();e.returnValue='';}});
 });
 document.addEventListener('keydown',e=>{
+  // Alt+S = lưu dòng đang focus
+  if(e.altKey&&e.key.toLowerCase()==='s'){
+    e.preventDefault();
+    const focused=document.activeElement;
+    if(focused){
+      const tr=focused.closest('tr[data-id]');
+      if(tr){saveRow(parseInt(tr.dataset.id));return;}
+    }
+    // Lưu tất cả dòng đang unsaved
+    document.querySelectorAll('tr.us[data-id]').forEach(tr=>saveRow(parseInt(tr.dataset.id)));
+    return;
+  }
   if(e.key==='Escape'){lbH();document.querySelectorAll('.cl').forEach(e=>e.classList.remove('on'));}
   if(document.getElementById('lb').classList.contains('on')){if(e.key==='ArrowRight')lbN(1,e);if(e.key==='ArrowLeft')lbN(-1,e);}
 });
